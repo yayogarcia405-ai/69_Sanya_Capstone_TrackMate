@@ -1,24 +1,21 @@
 import { useState } from "react";
-import Logoimg from "../components/logo.png";
+import { useNavigate } from "react-router-dom";
+import Logoimg from "../images/logo.png";
 
 export default function EntryPage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="w-full min-h-screen bg-[#D2B48C]">
       {/* Navbar */}
       <nav className="w-full flex justify-between items-center px-8 py-4 bg-[#A07855] shadow-md">
-        {/* Left Spacer for Centering */}
         <div className="flex-1"></div>
-
-        {/* Logo & Title - Centered */}
         <div className="flex items-center gap-4">
           <img src={Logoimg} alt="TrackMate Logo" className="h-12 w-12" />
           <h1 className="text-3xl font-bold text-black">TrackMate</h1>
         </div>
-
-        {/* Buttons - Right Aligned */}
         <div className="flex gap-4 flex-1 justify-end">
           <button
             className="px-4 py-2 bg-black text-white rounded-lg"
@@ -34,7 +31,6 @@ export default function EntryPage() {
           </button>
         </div>
       </nav>
-
       {/* Hero Section */}
       <div className="text-center mt-8">
         <h2 className="text-4xl font-bold text-black">Welcome to TrackMate!</h2>
@@ -72,16 +68,21 @@ export default function EntryPage() {
           </p>
         </div>
       </div>
-
       {/* Login Modal */}
       {showLoginModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-[#D2B48C] p-6 rounded-lg shadow-lg w-96">
             <h3 className="text-lg font-bold text-black mb-4">Login as:</h3>
-            <button className="w-full px-4 py-2 mb-2 bg-black text-white rounded-md">
+            <button
+              className="w-full px-4 py-2 mb-2 bg-black text-white rounded-md"
+              onClick={() => navigate("/manager-login")}
+            >
               Manager
             </button>
-            <button className="w-full px-4 py-2 bg-black text-white rounded-md">
+            <button
+              className="w-full px-4 py-2 bg-black text-white rounded-md"
+              onClick={() => navigate("/employee-login")}
+            >
               Employee
             </button>
             <button
@@ -99,10 +100,16 @@ export default function EntryPage() {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-[#D2B48C] p-6 rounded-lg shadow-lg w-96">
             <h3 className="text-lg font-bold text-black mb-4">Sign up as:</h3>
-            <button className="w-full px-4 py-2 mb-2 bg-black text-white rounded-md">
+            <button
+              className="w-full px-4 py-2 mb-2 bg-black text-white rounded-md"
+              onClick={() => navigate("/manager-signup")}
+            >
               Manager
             </button>
-            <button className="w-full px-4 py-2 bg-black text-white rounded-md">
+            <button
+              className="w-full px-4 py-2 bg-black text-white rounded-md"
+              onClick={() => navigate("/employee-signup")}
+            >
               Employee
             </button>
             <button

@@ -2,7 +2,7 @@ const express=require("express");
 const cors=require("cors");
 const mongoose=require("mongoose");
 require("dotenv").config();
-const PORT=3010;
+const PORT=5000;
 const app=express();
 const authRoutes=require('./routes/auth')
 
@@ -14,6 +14,7 @@ mongoose.connect(process.env.MONGO_URI)
 .catch((err)=>console.log("Error connecting to database. Error: ",err));
 
 app.use("/api/auth", authRoutes);
+
 
 app.listen(PORT, ()=>{
     console.log(`Server is running on http://localhost:${PORT}`);
