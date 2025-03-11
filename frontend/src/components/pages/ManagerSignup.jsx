@@ -42,7 +42,7 @@ export default function ManagerSignup() {
         setError(data.message || "Signup failed");
       }
     } catch (error) {
-      setError("Server error. Please try again later.");
+      setError("Server error. Please try again after some time.");
     }
   };
 

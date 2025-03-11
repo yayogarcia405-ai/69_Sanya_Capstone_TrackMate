@@ -9,7 +9,7 @@ export default function EntryPage() {
 
   return (
     <div className="w-full min-h-screen bg-[#D2B48C]">
-      {/* Navbar */}
+      {/* navbar */}
       <nav className="w-full flex justify-between items-center px-8 py-4 bg-[#A07855] shadow-md">
         <div className="flex-1"></div>
         <div className="flex items-center gap-4">
@@ -35,7 +35,7 @@ export default function EntryPage() {
       <div className="text-center mt-8">
         <h2 className="text-4xl font-bold text-black">Welcome to TrackMate!</h2>
         <p className="text-lg text-gray-800">
-          Effortless Workforce Tracking for Maximum Productivity
+          Effortless Workforce Tracking for Maximum Productivity.
         </p>
       </div>
 

@@ -27,7 +27,7 @@ export default function ManagerLogin() {
         setError(data.message || "Login failed");
       }
     } catch (error) {
-      setError("Server error. Please try again later.");
+      setError("Server error. Please try again after some time.");
     }
   };
 
