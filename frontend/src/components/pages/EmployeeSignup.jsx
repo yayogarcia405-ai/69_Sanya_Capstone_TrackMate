@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function ManagerSignup() {
+export default function EmployeeSignup() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -49,7 +49,7 @@ export default function ManagerSignup() {
   return (
     <div className="flex justify-center items-center h-screen bg-[#D2B48C]">
       <form className="bg-[#a58352] p-6 rounded-lg shadow-md w-96 text-white" onSubmit={handleSubmit}>
-        <h2 className="text-xl font-bold mb-4 text-center text-black">Manager Signup</h2>
+        <h2 className="text-xl font-bold mb-4 text-center text-black">Employee Signup</h2>
         {error && <p className="text-red-400 text-sm">{error}</p>}
         
         <input
