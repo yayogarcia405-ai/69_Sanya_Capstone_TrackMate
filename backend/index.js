@@ -17,7 +17,7 @@ app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {
     res.send(
-        "<h1>Server is running</h1>"
+        "<h1>Server is running. Database Connected.</h1>"
     );
 });
 

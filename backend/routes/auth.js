@@ -5,7 +5,7 @@ const { body, validationResult } = require("express-validator");
 const User = require("../models/User");
 
 router.post("/manager/signup", [
-    body("username").notEmpty().withMessage("Username is required."),
+    body("username").notEmpty().withMessage("Username cannot be empty."),
     body("phone").isMobilePhone().withMessage("Valid phone number is required."),
     body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters."),
     body("roles").isIn(["manager", "employee"]).withMessage("Role must be 'manager' or 'employee'.")
@@ -32,7 +32,7 @@ router.post("/manager/signup", [
 });
 
 router.post("/employee/signup", [
-    body("username").notEmpty().withMessage("Username is required."),
+    body("username").notEmpty().withMessage("Username cannot be empty"),
     body("phone").isMobilePhone().withMessage("Valid phone number is required."),
     body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters."),
     body("role").equals("employee").withMessage("Role must be 'employee'.") // Validate role as 'employee'
@@ -60,7 +60,7 @@ router.post("/employee/signup", [
 
 
 router.post("/manager/login", [
-    body("phone").isMobilePhone().withMessage("Valid phone number is required."),
+    body("phone").isMobilePhone().withMessage("Invalid phone number entered."),
     body("password").notEmpty().withMessage("Password is required."),
 ], async (req, res) => {
     const errors = validationResult(req);
@@ -88,7 +88,7 @@ router.post("/manager/login", [
 });
 
 router.post("/employee/login", [
-    body("phone").isMobilePhone().withMessage("Valid phone number is required."),
+    body("phone").isMobilePhone().withMessage("Invalid phone number entered"),
     body("password").notEmpty().withMessage("Password is required."),
 ], async (req, res) => {
     const errors = validationResult(req);
