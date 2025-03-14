@@ -198,26 +198,26 @@ async (req, res) => {
 
 });
 
-// Forgot Password - Send OTP
-router.post("/forgot-password", async (req, res) => {
-    const { email } = req.body;
+// // Forgot Password - Send OTP
+// router.post("/forgot-password", async (req, res) => {
+//     const { email } = req.body;
 
-    try {
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
+//     try {
+//         const user = await User.findOne({ email });
+//         if (!user) {
+//             return res.status(404).json({ message: "User not found" });
+//         }
 
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        storeOTP(email, otp); // Store OTP with expiry
-        await sendOTP(email, otp); // Send OTP via email
+//         const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//         storeOTP(email, otp); // Store OTP with expiry
+//         await sendOTP(email, otp); // Send OTP via email
 
-        return res.json({ message: "OTP sent to your email" });
-    } catch (error) {
-        console.error("Error in forgot password:", error);
-        return res.status(500).json({ message: "Server error" });
-    }
-});
+//         return res.json({ message: "OTP sent to your email" });
+//     } catch (error) {
+//         console.error("Error in forgot password:", error);
+//         return res.status(500).json({ message: "Server error" });
+//     }
+// });
 
 // Verify OTP for Password Reset
 router.post("/verify-reset-otp", async (req, res) => {
