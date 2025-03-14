@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function EmployeeLogin() {
-  const [formData, setFormData] = useState({ phone: "", password: "" });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -38,10 +38,10 @@ export default function EmployeeLogin() {
         {error && <p className="text-red-400 text-sm">{error}</p>}
 
         <input
-          type="tel"
-          name="phone"
-          placeholder="Phone Number"
-          value={formData.phone}
+          type="email"
+          name="email"
+          placeholder="Email Address"
+          value={formData.email}
           onChange={handleChange}
           className="w-full px-3 py-2 border rounded-lg mb-2 bg-[#C6A679] text-black"
           required
@@ -61,11 +61,11 @@ export default function EmployeeLogin() {
           Login
         </button>
 
-        <div className="flex justify-between mt-3 text-sm">
-          <button type="button" className="text-black hover:underline" onClick={() => alert("Forgot Password clicked!")}>
+        <div className="flex justify-between text-sm mb-2">
+          <button type="button" className="text-black underline" onClick={() => navigate("/forgot-password")}>
             Forgot Password?
           </button>
-          <button type="button" className="text-black hover:underline" onClick={() => alert("Login with OTP clicked!")}>
+          <button type="button" className="text-black underline" onClick={() => navigate("/otp-login")}>
             Login with OTP
           </button>
         </div>

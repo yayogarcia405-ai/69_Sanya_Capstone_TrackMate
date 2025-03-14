@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function ManagerSignup() {
   const [formData, setFormData] = useState({
     name: "",
-    phone: "",
+    email: "",
     password: "",
     confirmPassword: "",
   });
@@ -29,7 +29,7 @@ export default function ManagerSignup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: formData.name, // Using name as username
-          phone: formData.phone,
+          email: formData.email,
           password: formData.password,
           roles: "manager",
         }),
@@ -63,10 +63,10 @@ export default function ManagerSignup() {
         />
 
         <input
-          type="tel"
-          name="phone"
-          placeholder="Phone Number"
-          value={formData.phone}
+          type="email"
+          name="email"
+          placeholder="Email Address"
+          value={formData.email}
           onChange={handleChange}
           className="w-full px-3 py-2 border rounded-lg mb-2 bg-[#C6A679] text-black"
           required
@@ -92,7 +92,7 @@ export default function ManagerSignup() {
           required
         />
 
-        <button type="submit" onClick = {handleSubmit} className="w-full bg-[#8B6F47] text-white py-2 rounded-lg hover:bg-[#725a3a]">
+        <button type="submit" className="w-full bg-[#8B6F47] text-white py-2 rounded-lg hover:bg-[#725a3a]">
           Sign Up
         </button>
       </form>

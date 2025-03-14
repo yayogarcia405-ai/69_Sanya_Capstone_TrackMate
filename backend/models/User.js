@@ -5,7 +5,7 @@ const UserSchema= new mongoose.Schema({
         type: String,
         required: true,
     },
-    phone: { 
+    email: { 
         type: String, 
         required: true, 
         unique: true
@@ -21,4 +21,4 @@ const UserSchema= new mongoose.Schema({
     }
 });
 
-module.exports=mongoose.model("User", UserSchema);
+module.exports=mongoose.model("NewUser", UserSchema);
