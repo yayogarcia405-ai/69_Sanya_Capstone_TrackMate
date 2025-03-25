@@ -28,9 +28,9 @@ const OtpLogin = () => {
   
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#D2B48C]">
-      <div className="bg-[#a58352] p-6 rounded-lg shadow-md w-96 text-white">
-        <h2 className="text-xl font-bold mb-4 text-center text-black">Login with OTP</h2>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#c2c0c0]">
+      <div className="bg-[#626669] p-6 rounded-lg shadow-md w-96 text-white">
+        <h2 className="text-xl font-bold mb-4 text-center text-white">Login with OTP</h2>
   
         {/* Email Input */}
         {!otpSent && (
@@ -40,11 +40,11 @@ const OtpLogin = () => {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg mb-4 bg-[#C6A679] text-black"
+              className="w-full px-3 py-2 border rounded-lg mb-3 bg-[#6C757D] text-white placeholder-white"
             />
             <button
               onClick={handleSendOtp}
-              className={`w-full p-2 bg-[#8B6F47] text-white rounded ${loading && "opacity-50 cursor-not-allowed"}`}
+              className="w-full bg-[#343A40] text-white py-2 rounded-lg hover:bg-[#818181]"
               disabled={loading}
             >
               {loading ? "Sending OTP..." : "Send OTP"}

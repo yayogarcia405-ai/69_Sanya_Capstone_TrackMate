@@ -40,16 +40,16 @@ const OtpVerify = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-[#D2B48C]">
-      <form className="bg-[#a58352] p-6 rounded-lg shadow-md w-96 text-white" onSubmit={handleVerifyOtp}>
-        <h2 className="text-xl font-bold mb-4 text-center text-black">Verify OTP</h2>
+    <div className="flex justify-center items-center h-screen bg-[#c2c0c0]">
+      <form className="bg-[#626669] p-6 rounded-lg shadow-md w-96 text-white" onSubmit={handleVerifyOtp}>
+        <h2 className="text-xl font-bold mb-4 text-center text-white">Verify OTP</h2>
 
         <input
           type="email"
           name="email"
           value={email}
           disabled // Make it read-only
-          className="w-full px-3 py-2 border rounded-lg mb-2 bg-gray-300 text-black"
+          className="w-full px-3 py-2 border rounded-lg mb-3 bg-[#6C757D] text-white placeholder-white"
         />
 
         <input
@@ -58,11 +58,11 @@ const OtpVerify = () => {
           placeholder="Enter OTP"
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
-          className="w-full px-3 py-2 border rounded-lg mb-2 bg-[#C6A679] text-black"
+          className="w-full px-3 py-2 border rounded-lg mb-3 bg-[#6C757D] text-white placeholder-white"
           required
         />
 
-        <button type="submit" className="w-full bg-[#8B6F47] text-white py-2 rounded-lg hover:bg-[#725a3a]">
+<button type="submit" className="w-full bg-[#343A40] text-white py-2 rounded-lg hover:bg-[#818181]">
           Verify OTP
         </button>
       </form>
