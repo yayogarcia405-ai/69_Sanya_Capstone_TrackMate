@@ -32,44 +32,54 @@ export default function EmployeeLogin() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-[#D2B48C]">
-      <form className="bg-[#a58352] p-6 rounded-lg shadow-md w-96 text-white" onSubmit={handleSubmit}>
-        <h2 className="text-xl font-bold mb-4 text-center text-black">Employee Login</h2>
-        {error && <p className="text-red-400 text-sm">{error}</p>}
-
+    <div className="flex justify-center items-center h-screen bg-[#c2c0c0]">
+      <form className="bg-[#626669] p-8 rounded-lg shadow-md w-96 h-[26rem] flex flex-col justify-center text-white" onSubmit={handleSubmit}>
+        
+        
+        {/* Title */}
+        <h2 className="text-2xl font-bold mb-6 text-center text-white">Employee Login</h2>
+        
+        {/* Error Message */}
+        {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
+        
+        {/* Email Input */}
         <input
           type="email"
           name="email"
           placeholder="Email Address"
           value={formData.email}
           onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-lg mb-2 bg-[#C6A679] text-black"
+          className="w-full px-4 py-3 border rounded-lg mb-4 bg-[#6C757D] text-white placeholder-white"
           required
         />
-
+        
+        {/* Password Input */}
         <input
           type="password"
           name="password"
           placeholder="Password"
           value={formData.password}
           onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-lg mb-2 bg-[#C6A679] text-black"
+          className="w-full px-4 py-3 border rounded-lg mb-6 bg-[#6C757D] text-white placeholder-white"
           required
         />
-
-        <button type="submit" className="w-full bg-[#8B6F47] text-white py-2 rounded-lg hover:bg-[#725a3a]">
+  
+        {/* Login Button */}
+        <button type="submit" className="w-full bg-[#343A40] text-white py-3 rounded-lg hover:bg-[#818181] mb-6">
           Login
         </button>
-
-        <div className="flex justify-between text-sm mb-2">
-          <button type="button" className="text-black underline" onClick={() => navigate("/forgot-password")}>
+  
+        {/* Additional Options */}
+        <div className="flex justify-between text-sm">
+          <button type="button" className="text-white underline" onClick={() => navigate("/forgot-password")}>
             Forgot Password?
           </button>
-          <button type="button" className="text-black underline" onClick={() => navigate("/otp-login")}>
+          <button type="button" className="text-white underline" onClick={() => navigate("/otp-login")}>
             Login with OTP
           </button>
         </div>
       </form>
     </div>
   );
-}
+};
+  

@@ -20,10 +20,12 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-[#D2B48C]">
-      <form className="bg-[#a58352] p-6 rounded-lg shadow-md w-96 text-white" onSubmit={handleSendOtp}>
-        <h2 className="text-xl font-bold mb-4 text-center text-black">Forgot Password</h2>
-        <p className="text-center text-sm mb-4 text-black">Enter your email to receive an OTP.</p>
+    <div className="flex justify-center items-center h-screen bg-[#c2c0c0]">
+      <form className="bg-[#626669] p-8 rounded-lg shadow-md w-96  flex flex-col justify-center text-white" onSubmit={handleSendOtp}>
+        
+        {/* Title */}
+        <h2 className="text-2xl font-bold mb-6 text-center text-white">Forgot Password</h2>
+        <p className="text-center text-sm mb-4 text-white">Enter your email to receive an OTP.</p>
 
         <input
           type="email"
@@ -31,10 +33,10 @@ const ForgotPassword = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full px-3 py-2 border rounded-lg mb-2 bg-[#C6A679] text-black"
+          className="w-full px-3 py-2 border rounded-lg mb-3 bg-[#6C757D] text-white placeholder-white"
         />
 
-        <button type="submit" className="w-full bg-[#8B6F47] text-white py-2 rounded-lg hover:bg-[#725a3a]">
+<button type="submit" className="w-full bg-[#343A40] text-white py-2 rounded-lg hover:bg-[#818181]">
           Send OTP
         </button>
 
