@@ -10,7 +10,10 @@ import OtpVerify from "./components/pages/OtpVerify";
 import ForgotPassword from "./components/pages/ForgotPassword";
 import ResetPassword from "./components/pages/ResetPassword";
 import VerifyResetOtp from "./components/pages/VerifyResetOtp";
-
+import ManagerDashboard from "./components/pages/ManagerDashboard";
+import AddTask from "./components/pages/AddTask";
+import ViewSchedule from "./components/pages/ViewSchedule";
+import ViewLogs from "./components/pages/ViewLogs";
 
 
 function App() {
@@ -27,6 +30,10 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-reset-otp" element={<VerifyResetOtp />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/manager-dashboard" element={<ManagerDashboard/>}/>
+        <Route path="/manager/add-task/:employeeId" element={<AddTask/>}/>
+        <Route path="/manager/view-schedule/:employeeId" element={<ViewSchedule/>}/>
+        <Route path="/view-logs" element={<ViewLogs/>}/>
       </Routes>
     </Router>
   );
