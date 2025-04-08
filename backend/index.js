@@ -5,6 +5,7 @@ require("dotenv").config();
 const PORT = 5000;
 const app = express();
 const authRoutes = require('./routes/auth');
+const taskRoutes=require('./routes/taskRoutes')
 const { generateOTP, sendOTP, storeOTP, verifyOTP } = require("./utils/otpService");
 
 app.use(express.json());
@@ -17,6 +18,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/", taskRoutes)
 
 // Send OTP via Email
 app.post("/otp-login", async (req, res) => {

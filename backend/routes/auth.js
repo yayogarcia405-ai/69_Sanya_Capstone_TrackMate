@@ -11,7 +11,24 @@ const app = express();
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
 
-
+router.get("/employees", async (req, res) => {
+    try {
+      const employees = await User.find({ roles: "employee" }).select("-password"); // hide password
+      res.status(200).json(employees);
+    } catch (err) {
+      console.error("Error fetching employees:", err);
+      res.status(500).json({ message: "Failed to fetch employees" });
+    }
+  });
+  router.get("/managers", async (req, res) => {
+  try {
+    const managers = await User.find({ roles: "manager" }).select("-password");
+    res.status(200).json(managers);
+  } catch (err) {
+    console.error("Error fetching managers:", err);
+    res.status(500).json({ message: "Failed to fetch managers" });
+  }
+});
 router.post("/manager/signup", [
     body("username").notEmpty().withMessage("Username cannot be empty."),
     body("email").isEmail().withMessage("Valid email is required."),
@@ -260,5 +277,25 @@ router.post("/reset-password", async (req, res) => {
     }
 });
 
-
+router.put("/employees/:id/department", async (req, res) => {
+    const { id } = req.params;
+    const { department } = req.body;
+  
+    try {
+      const updatedEmployee = await User.findByIdAndUpdate(
+        id,
+        { department },
+        { new: true } // returns the updated doc
+      );
+  
+      if (!updatedEmployee) {
+        return res.status(404).json({ message: "Employee not found" });
+      }
+  
+      res.status(200).json(updatedEmployee);
+    } catch (err) {
+      console.error("Error updating department:", err);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
 module.exports = router;
