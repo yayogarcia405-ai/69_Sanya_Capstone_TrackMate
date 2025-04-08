@@ -18,7 +18,11 @@ const UserSchema= new mongoose.Schema({
         type: String, 
         required: true,
         enum: ["manager", "employee"]
-    }
+    },
+    department: {
+        type: String,
+        default: "", // Optional: gives you a blank value by default
+      },
 });
 
 module.exports=mongoose.model("NewUser", UserSchema);
