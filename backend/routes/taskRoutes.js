@@ -15,7 +15,7 @@ router.post("/add-tasks", async (req, res) => {
     } = req.body;
     
     if (!employeeId || !date || !time || !address || !pincode || !city || !description){
-        return res.status(400).json({message: "Fields are missing"})
+        return res.status(400).json({message: "Fields are missing."})
     }
     try {
       const newTask = new Task({
@@ -29,10 +29,10 @@ router.post("/add-tasks", async (req, res) => {
       });
   
       await newTask.save();
-      res.status(201).json({ message: "Task created", task: newTask });
+      res.status(201).json({ message: "Task created!", task: newTask });
     } catch (err) {
       console.error("Error creating task:", err);
-      res.status(500).json({ message: "Failed to create task", error: err });
+      res.status(500).json({ message: "Failed to create task.", error: err });
     }
   });
   
@@ -42,7 +42,7 @@ router.get('/tasks/:employeeId', async (req, res) => {
       const tasks = await Task.find({ employeeId: req.params.employeeId });
       res.status(200).json(tasks);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch tasks' });
+      res.status(500).json({ error: 'Failed to fetch tasks.' });
     }
   });
 

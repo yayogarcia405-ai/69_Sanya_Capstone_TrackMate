@@ -17,7 +17,7 @@ router.get("/employees", async (req, res) => {
       res.status(200).json(employees);
     } catch (err) {
       console.error("Error fetching employees:", err);
-      res.status(500).json({ message: "Failed to fetch employees" });
+      res.status(500).json({ message: "Failed to fetch employees." });
     }
   });
   router.get("/managers", async (req, res) => {
@@ -26,7 +26,7 @@ router.get("/employees", async (req, res) => {
     res.status(200).json(managers);
   } catch (err) {
     console.error("Error fetching managers:", err);
-    res.status(500).json({ message: "Failed to fetch managers" });
+    res.status(500).json({ message: "Failed to fetch managers." });
   }
 });
 router.post("/manager/signup", [
