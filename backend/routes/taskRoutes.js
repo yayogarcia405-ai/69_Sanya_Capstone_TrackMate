@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Task = require('../models/Task');
+const User=require('../models/User')
 
 router.post("/add-tasks", async (req, res) => {
     const {
@@ -13,11 +14,14 @@ router.post("/add-tasks", async (req, res) => {
       city,
       description,
     } = req.body;
-    
-    if (!employeeId || !date || !time || !address || !pincode || !city || !description){
+    if (!date || !time || !address || !pincode || !city || !description){
         return res.status(400).json({message: "Fields are missing."})
     }
     try {
+      const employee = await User.findById(employeeId);
+      if (!employee) {
+        return res.status(404).json({ message: "Employee not found." });
+      }
       const newTask = new Task({
         employeeId,
         date,
