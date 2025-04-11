@@ -81,6 +81,13 @@ router.post("/employee/signup",  upload.single("document"), [
 
     const { username, email, password, role } = req.body;
     try {
+        if (!req.file){
+            return res.status(400).json({
+                success: false, 
+                message: "Document is required. Please upload a valid file.",
+                field: "document"
+            })
+        }
         let user = await User.findOne({ email });
         if (user) return res.status(400).json({ message: "Email already registered." });
 
@@ -354,4 +361,25 @@ router.put("/employees/:id/department", async (req, res) => {
       res.status(500).json({ message: "Server error" });
     }
   });
+
+router.delete('/employees/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      console.log('Attempting to delete employee with ID:', id);
+      
+      // Replace with your DB logic (e.g., MongoDB, PostgreSQL, etc.)
+      const deletedEmployee = await User.findByIdAndDelete(id);
+      
+      if (!deletedEmployee) {
+        console.log('User not found for deletion');
+        return res.status(404).json({ message: 'Employee not found' });
+      }
+      console.log('User deleted successfully');
+      res.status(200).json({ message: 'Employee deleted successfully' });
+    } catch (error) {
+      console.error('Error while deleting user:', error);
+      res.status(500).json({ message: 'Server error', error });
+    }
+  });
+  
 module.exports = router;
