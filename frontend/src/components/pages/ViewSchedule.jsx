@@ -79,7 +79,14 @@ const ViewSchedule = () => {
                 <div>
                   <span className="text-white block">{task.description}</span>
                   <span className="text-gray-300 text-sm">
-                    {task.date} at {task.time} - {task.address}
+                    {task.date} at {task.time} - <a
+                      href={task.address}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white-400 underline hover:text-blue-300"
+                    >
+                      📍 Open Location in Maps
+                    </a>
                   </span>
                 </div>
                 <button 

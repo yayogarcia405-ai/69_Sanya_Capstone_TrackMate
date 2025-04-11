@@ -23,6 +23,11 @@ const UserSchema= new mongoose.Schema({
         type: String,
         default: "", // Optional: gives you a blank value by default
       },
+      document: {
+        filename: { type: String, default: "" },
+        path: { type: String, default: "" },
+        uploadedAt: { type: Date, default: Date.now }
+      }      
 });
 
 module.exports=mongoose.model("NewUser", UserSchema);

@@ -8,11 +8,16 @@ export default function EmployeeSignup() {
     password: "",
     confirmPassword: "",
   });
+  const [documentFile, setDocumentFile] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    setDocumentFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -24,25 +29,32 @@ export default function EmployeeSignup() {
     }
 
     try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("username", formData.name);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("password", formData.password);
+      formDataToSend.append("role", "employee");
+      
+      // This is the critical change - use "document" as the field name
+      if (documentFile) {
+        formDataToSend.append("document", documentFile);
+      }
+
       const response = await fetch("http://localhost:5000/api/auth/employee/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formData.name, // Using name as username
-          email: formData.email,
-          password: formData.password,
-          role: "employee",
-        }),
+        body: formDataToSend, // No Content-Type header needed - browser sets it automatically
       });
 
       const data = await response.json();
+
       if (response.ok) {
         navigate("/employee-login");
       } else {
         setError(data.message || "Signup failed");
       }
     } catch (error) {
-      setError("Server error. Please try again after some time.");
+      console.error("Signup error:", error);
+      setError("Server error. Please try again.");
     }
   };
 
@@ -50,13 +62,10 @@ export default function EmployeeSignup() {
     <div className="flex justify-center items-center h-screen bg-[#c2c0c0]">
       <form className="bg-[#626669] p-8 rounded-lg shadow-md w-96 h-[30rem] flex flex-col justify-center text-white" onSubmit={handleSubmit}>
         
-        {/* Title */}
-        <h2 className="text-2xl font-bold mb-6 text-center text-white">Employee Signup</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">Employee Signup</h2>
   
-        {/* Error Message */}
         {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
   
-        
         <input
           type="text"
           name="name"
@@ -97,10 +106,22 @@ export default function EmployeeSignup() {
           required
         />
 
-        {/* Upload Face Button (Functionality to be added later) */}
-        <button type="button" className="w-full bg-[#6C757D] text-white py-2 rounded-lg hover:bg-[#725a3a] mb-2">
-          Upload Face (Coming Soon)
-        </button>
+        {/* Updated file input label */}
+        <label className="w-full bg-[#6C757D] text-white py-2 rounded-lg hover:bg-[#818181] text-center cursor-pointer mb-2">
+          <span>{documentFile ? "Change Document" : "Upload Document"}</span>
+          <input
+            type="file"
+            onChange={handleFileChange}
+            className="hidden"
+            accept=".pdf,.doc,.docx,image/*" // Specify accepted file types
+          />
+        </label>
+        
+        {documentFile && (
+          <p className="text-sm text-white mt-1 text-center">
+            Selected: {documentFile.name}
+          </p>
+        )}
 
         <button type="submit" className="w-full bg-[#343A40] text-white py-2 rounded-lg hover:bg-[#818181]">
           Sign Up

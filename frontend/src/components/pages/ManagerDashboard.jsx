@@ -1,27 +1,31 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; 
-import Logoimg from "../images/trackmate.png";
+import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Settings } from "lucide-react";
-import { useEffect } from "react";
 import axios from "axios";
+import Logoimg from "../images/trackmate.png";
+import React from "react"; // Explicitly import React for React.memo
 
 export default function ManagerDashboard() {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("task-assignment");
   const [employees, setEmployees] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/auth/employees");
         setEmployees(res.data);
+        setError(null);
       } catch (err) {
         console.error("Error fetching employees:", err);
+        setError("Failed to load employees. Please try again.");
       }
     };
 
     fetchEmployees();
   }, []);
+
   return (
     <div className="w-full min-h-screen bg-[#c2c0c0]">
       {/* Navbar */}
@@ -32,7 +36,8 @@ export default function ManagerDashboard() {
         </div>
         <button
           className="absolute right-8 top-5 text-white"
-          onClick={() => navigate("/manager-settings")} 
+          onClick={() => navigate("/manager-settings")}
+          aria-label="Manager Settings"
         >
           <Settings size={28} />
         </button>
@@ -40,24 +45,31 @@ export default function ManagerDashboard() {
 
       {/* Main Section */}
       <div className="w-full flex justify-center items-center mt-6 space-x-2 text-lg font-semibold">
-        <span
+        <button
           className={`cursor-pointer px-4 py-2 ${
             activeTab === "task-assignment" ? "text-black" : "text-gray-500"
           }`}
           onClick={() => setActiveTab("task-assignment")}
+          aria-selected={activeTab === "task-assignment"}
+          role="tab"
         >
           Task Assignment
-        </span>
+        </button>
         <span className="text-gray-400">|</span>
-        <span
+        <button
           className={`cursor-pointer px-4 py-2 ${
             activeTab === "department-assignment" ? "text-black" : "text-gray-500"
           }`}
           onClick={() => setActiveTab("department-assignment")}
+          aria-selected={activeTab === "department-assignment"}
+          role="tab"
         >
           Department Assignment
-        </span>
+        </button>
       </div>
+
+      {/* Error Message */}
+      {error && <div className="text-red-500 text-center mt-4">{error}</div>}
 
       {/* Render Active Tab */}
       <div className="mt-8 px-10">
@@ -71,41 +83,37 @@ export default function ManagerDashboard() {
   );
 }
 
-function DepartmentAssignment({ employees, setEmployees }) {
+const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
   const [search, setSearch] = useState("");
+  const filteredEmployees = useMemo(() => {
+    return employees.filter((emp) =>
+      emp.username.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search, employees]);
 
   const handleDepartmentChange = async (_id, department) => {
     try {
       const res = await fetch(`http://localhost:5000/api/auth/employees/${_id}/department`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ department }),
       });
-  
-      if (!res.ok) {
-        throw new Error("Failed to update department");
-      }
-  
+
+      if (!res.ok) throw new Error("Failed to update department");
       const updatedEmp = await res.json();
-  
-      // Update state with the returned employee
+
+      if (!updatedEmp._id || !updatedEmp.username) {
+        throw new Error("Invalid employee data from API");
+      }
+
       setEmployees((prev) =>
-        prev.map((emp) =>
-          emp._id === _id ? updatedEmp : emp
-        )
+        prev.map((emp) => (emp._id === _id ? updatedEmp : emp))
       );
     } catch (err) {
       console.error("Error:", err);
       alert("Failed to update department.");
     }
   };
-  
-
-  const filteredEmployees = employees.filter((emp) =>
-    emp.username.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <div>
@@ -120,12 +128,48 @@ function DepartmentAssignment({ employees, setEmployees }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredEmployees.map((emp) => (
-          <div key={emp._id} className="bg-white rounded-xl p-4 shadow flex items-center space-x-4">
-            <img src={emp.photo} alt={emp.username} className="h-14 w-14 rounded-full object-cover" />
-            <div>
+          <div
+            key={`dept-${emp._id}`}
+            className="bg-white rounded-xl p-4 shadow flex flex-col items-center space-y-3"
+          >
+            {emp.document?.path && (
+              emp.document.path.match(/\.(jpg|jpeg|png|gif)$/i) ? (
+                <img
+                  src={`http://localhost:5000${emp.document.path}`}
+                  alt={`${emp.username}'s document`}
+                  className="h-14 w-14 rounded-full object-cover border-2 border-gray-300"
+                  onError={(e) => {
+                    console.log("Document image failed, using default:", emp.document.path);
+                    e.target.onerror = null;
+                    e.target.src = "/default-document.png"; // Ensure this file exists in public/
+                  }}
+                />
+              ) : (
+                <div className="h-14 w-14 rounded-full bg-gray-200 flex items-center justify-center">
+                  <span className="text-sm">Doc</span>
+                </div>
+              )
+            )}
+
+            <img
+              src={
+                emp.photo
+                  ? `http://localhost:5000/uploads/${emp.photo}`
+                  : "/default-profile.png"
+              }
+              onError={(e) => {
+                console.log("Profile image failed, using default:", emp.photo);
+                e.target.onerror = null;
+                e.target.src = "/default-profile.png"; // Ensure this file exists in public/
+              }}
+              alt={`${emp.username}'s profile photo`}
+              className="h-14 w-14 rounded-full object-cover mx-auto"
+            />
+
+            <div className="text-center">
               <p className="font-semibold text-lg">{emp.username}</p>
               <select
-                value={emp.department}
+                value={emp.department || ""}
                 onChange={(e) => handleDepartmentChange(emp._id, e.target.value)}
                 className="mt-2 border px-2 py-1 rounded"
               >
@@ -140,23 +184,19 @@ function DepartmentAssignment({ employees, setEmployees }) {
       </div>
     </div>
   );
-}
+});
 
-function TaskAssignment({ employees }) {
+const TaskAssignment = React.memo(({ employees }) => {
   const [selectedDept, setSelectedDept] = useState("");
-  const navigate = useNavigate(); // ✅ Hook for navigation
+  const navigate = useNavigate();
+  const filteredEmployees = useMemo(() => {
+    return selectedDept
+      ? employees.filter((e) => e.department === selectedDept)
+      : employees;
+  }, [selectedDept, employees]);
 
-  const filtered = selectedDept
-    ? employees.filter((e) => e.department === selectedDept)
-    : employees;
-
-  const handleAddTask = (_id) => {
-    navigate(`/manager/add-task/${_id}`);
-  };
-
-  const handleViewSchedule = (_id) => {
-    navigate(`/manager/view-schedule/${_id}`);
-  };
+  const handleAddTask = (_id) => navigate(`/manager/add-task/${_id}`);
+  const handleViewSchedule = (_id) => navigate(`/manager/view-schedule/${_id}`);
 
   return (
     <div>
@@ -173,11 +213,34 @@ function TaskAssignment({ employees }) {
       </select>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filtered.map((emp) => (
-          <div key={emp._id} className="bg-white rounded-xl p-4 shadow flex flex-col items-center space-y-3">
-            <img src={emp.photo} alt={emp.username} className="h-14 w-14 rounded-full object-cover" />
+        {filteredEmployees.map((emp) => (
+          <div
+            key={`task-${emp._id}`}
+            className="bg-white rounded-xl p-4 shadow flex flex-col items-center space-y-3"
+          >
+            {emp.document?.path && (
+              emp.document.path.match(/\.(jpg|jpeg|png|gif)$/i) ? (
+                <img
+                  src={`http://localhost:5000${emp.document.path}`}
+                  alt={`${emp.username}'s document`}
+                  className="h-14 w-14 rounded-full object-cover border-2 border-gray-300"
+                  onError={(e) => {
+                    console.log("Document image failed, using default:", emp.document.path);
+                    e.target.onerror = null;
+                    e.target.src = "/default-document.png"; // Ensure this file exists in public/
+                  }}
+                />
+              ) : (
+                <div className="h-14 w-14 rounded-full bg-gray-200 flex items-center justify-center">
+                  <span className="text-sm">Doc</span>
+                </div>
+              )
+            )}
+
+           
             <p className="font-semibold text-lg">{emp.username}</p>
             <p className="text-sm text-gray-600">{emp.department || "No Department"}</p>
+            
             <div className="flex gap-3">
               <button
                 className="px-4 py-1 bg-[#495057] text-white rounded"
@@ -197,4 +260,4 @@ function TaskAssignment({ employees }) {
       </div>
     </div>
   );
-}
+});
