@@ -7,10 +7,22 @@ const User = require("../models/User");
 const otpService = require("../utils/otpService");
 const {verifyOTP}=require("../utils/otpService")
 const app = express();
+const multer = require("multer");
+const path = require("path");
 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
-
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "uploads/"); 
+    },
+    filename: function (req, file, cb) {
+      const uniqueName = Date.now() + "-" + file.originalname;
+      cb(null, uniqueName);
+    }
+  });
+  
+const upload = multer({ storage });
 router.get("/employees", async (req, res) => {
     try {
       const employees = await User.find({ roles: "employee" }).select("-password"); // hide password
@@ -56,7 +68,7 @@ router.post("/manager/signup", [
     }
 });
 
-router.post("/employee/signup", [
+router.post("/employee/signup",  upload.single("document"), [
     body("username").notEmpty().withMessage("Username cannot be empty"),
     body("email").isEmail().withMessage("Valid email is required."),
     body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters."),
@@ -73,13 +85,57 @@ router.post("/employee/signup", [
         if (user) return res.status(400).json({ message: "Email already registered." });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        user = new User({ username, email, password: hashedPassword, roles: role });
-        await user.save();
+        let document = null;
+        if (req.file) {
+            // Validate file type and size if needed
+            const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+            if (!allowedTypes.includes(req.file.mimetype)) {
+                return res.status(400).json({
+                    message: "Invalid file type. Only PDF, JPEG, and PNG are allowed.",
+                    field: "document"
+                });
+            }
 
-        res.status(201).json({ message: "Employee registered successfully!" });
+            // Max size 5MB
+            if (req.file.size > 5 * 1024 * 1024) {
+                return res.status(400).json({
+                    message: "File size too large. Maximum 5MB allowed.",
+                    field: "document"
+                });
+            }
+
+            document = {
+                filename: req.file.originalname,
+                path: `/uploads/${req.file.filename}`, // Use forward slash for web compatibility
+                mimetype: req.file.mimetype,
+                size: req.file.size,
+                uploadedAt: new Date()
+            };
+        }
+        user = new User({ username, email, password: hashedPassword, roles: role, document});
+        await user.save();
+        const userResponse = user.toObject();
+        delete userResponse.password;
+        res.status(201).json({ 
+            success: true,
+            message: "Employee registered successfully!",
+            user: userResponse
+        });
     } catch (err) {
         console.error("Signup Error:", err);
-        res.status(500).json({ message: "Server error." });
+        
+        // Clean up uploaded file if error occurred
+        if (req.file) {
+            fs.unlink(req.file.path, (unlinkErr) => {
+                if (unlinkErr) console.error("Error deleting uploaded file:", unlinkErr);
+            });
+        }
+
+        res.status(500).json({ 
+            success: false,
+            message: "Server error during registration.",
+            error: process.env.NODE_ENV === 'development' ? err.message : undefined
+        });
     }
 });
 
