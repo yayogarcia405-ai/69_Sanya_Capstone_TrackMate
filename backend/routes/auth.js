@@ -378,7 +378,7 @@ router.delete('/employees/:id', async (req, res) => {
       res.status(200).json({ message: 'Employee deleted successfully' });
     } catch (error) {
       console.error('Error while deleting user:', error);
-      res.status(500).json({ message: 'Server error', error });
+      res.status(500).json({ message: 'Server error'});
     }
   });
   
