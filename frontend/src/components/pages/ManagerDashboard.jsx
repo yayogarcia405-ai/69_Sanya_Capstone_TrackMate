@@ -151,21 +151,7 @@ const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
               )
             )}
 
-            <img
-              src={
-                emp.photo
-                  ? `http://localhost:5000/uploads/${emp.photo}`
-                  : "/default-profile.png"
-              }
-              onError={(e) => {
-                console.log("Profile image failed, using default:", emp.photo);
-                e.target.onerror = null;
-                e.target.src = "/default-profile.png"; // Ensure this file exists in public/
-              }}
-              alt={`${emp.username}'s profile photo`}
-              className="h-14 w-14 rounded-full object-cover mx-auto"
-            />
-
+        
             <div className="text-center">
               <p className="font-semibold text-lg">{emp.username}</p>
               <select
