@@ -50,14 +50,28 @@ router.get('/tasks/:employeeId', async (req, res) => {
     }
   });
 
-  router.put('/:taskId', async (req, res) => {
-    try {
-      const updated = await Task.findByIdAndUpdate(req.params.taskId, { status: 'completed' });
-      res.status(200).json({ message: 'Task marked as completed' });
-      await updated.save()
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to update task' });
+ // routes/taskRoutes.js
+router.put('/:taskId', async (req, res) => {
+  try {
+    const updated = await Task.findByIdAndUpdate(req.params.taskId, { completed: true }, { new: true });
+    res.status(200).json({ message: 'Task marked as completed', task: updated });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update task' });
+  }
+});
+
+router.delete("/tasks/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedTask = await Task.findByIdAndDelete(id);
+    if (!deletedTask) {
+      return res.status(404).json({ message: "Task not found" });
     }
-  });
+    res.status(200).json({ message: "Task deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
   
   module.exports = router;
