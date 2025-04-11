@@ -1,0 +1,18 @@
+meta {
+  name: Verify reset otp
+  type: http
+  seq: 8
+}
+
+post {
+  url: http://localhost:5000/api/auth/verify-reset-otp
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email":"san.pro404912@gmail.com",
+    "otp":"346443"
+  }
+}

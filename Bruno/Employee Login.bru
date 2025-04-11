@@ -1,0 +1,18 @@
+meta {
+  name: Employee Login
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:5000/api/auth/employee/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email":"ayishathnahda.9i@gmail.com",
+    "password":"Nahda@123"
+  }
+}

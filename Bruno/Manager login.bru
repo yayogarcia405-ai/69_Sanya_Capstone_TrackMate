@@ -1,0 +1,18 @@
+meta {
+  name: Manager login
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:5000/api/auth/manager/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email":"san.pro404912@gmail.com",
+    "password":"Sanya@123"
+  }
+}
