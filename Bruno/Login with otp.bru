@@ -1,0 +1,17 @@
+meta {
+  name: Login with otp
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://localhost:5000/api/auth/otp-login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email":"san.pro404912@gmail.com"
+  }
+}

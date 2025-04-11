@@ -1,0 +1,23 @@
+meta {
+  name: Add Task
+  type: http
+  seq: 12
+}
+
+post {
+  url: http://localhost:5000/add-tasks
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "employeeId":"67f8dce6d3e2536d3ef16830",
+    "date":"16-04-2025",
+    "time":"14:05",
+    "address":"xyz.com",
+    "pincode":"500003",
+    "city":"Hyderabad",
+    "description":"Get the payment done from Mr.Dhal"
+  }
+}

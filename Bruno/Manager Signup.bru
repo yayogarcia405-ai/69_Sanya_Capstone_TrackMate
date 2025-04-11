@@ -1,0 +1,20 @@
+meta {
+  name: Manager Signup
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:5000/api/auth/manager/signup
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username":"Sudhir Thakur",
+    "email":"sudhirthakur00@rediffmail.com",
+    "password":"Sudhir@123",
+    "roles":"manager"
+  }
+}
