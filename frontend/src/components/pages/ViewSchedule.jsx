@@ -33,10 +33,18 @@ const ViewSchedule = () => {
 
   const handleRemoveUser = () => setShowConfirm(true);
 
-  const confirmRemoveUser = () => {
-    // Remove user logic here
-    setShowConfirm(false);
-    navigate("/manager-dashboard");
+  const confirmRemoveUser = async () => {
+    try {// Remove user logic here
+      const res = await axios.delete(`http://localhost:5000/api/auth/employees/${employeeId}`);
+    
+      alert('User removed successfully');
+      setShowConfirm(false);
+      navigate('/manager-dashboard');
+    } catch (error) {
+      console.error('Error removing user:', error);
+      alert('Failed to remove user');
+      setShowConfirm(false);
+    }
   };
 
   const handleViewLogs = (task) => {
