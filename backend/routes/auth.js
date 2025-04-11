@@ -8,7 +8,7 @@ const otpService = require("../utils/otpService");
 const {verifyOTP}=require("../utils/otpService")
 const app = express();
 const multer = require("multer");
-const path = require("path");
+const fs=require("fs");
 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
