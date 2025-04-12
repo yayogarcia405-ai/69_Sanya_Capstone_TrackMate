@@ -14,6 +14,11 @@ import ManagerDashboard from "./components/pages/ManagerDashboard";
 import AddTask from "./components/pages/AddTask";
 import ViewSchedule from "./components/pages/ViewSchedule";
 import ViewLogs from "./components/pages/ViewLogs";
+import ManagerSettings from "./components/pages/ManagerSettings";
+import ManagerProfileSettings from "./components/pages/ManagerProfile";
+import HelpSupport from "./components/pages/HelpSupport";
+import FAQ from "./components/pages/FAQ";
+import EmployeeDashboard from "./components/pages/EmployeeDashboard";
 
 
 function App() {
@@ -34,6 +39,11 @@ function App() {
         <Route path="/manager/add-task/:employeeId" element={<AddTask/>}/>
         <Route path="/manager/view-schedule/:employeeId" element={<ViewSchedule/>}/>
         <Route path="/view-logs" element={<ViewLogs/>}/>
+        <Route path="/manager-settings" element={<ManagerSettings/>}/>
+        <Route path="/manager-profile" element={<ManagerProfileSettings/>}/>
+        <Route path="/help-support" element={<HelpSupport/>}/>
+        <Route path="/faq" element={<FAQ/>}/>
+        <Route path="/employee-dashboard" element={<EmployeeDashboard/>}/>
       </Routes>
     </Router>
   );
