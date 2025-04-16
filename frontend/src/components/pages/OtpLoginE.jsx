@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const OtpLogin = () => {
+const OtpLoginE = () => {
   const [email, setEmail] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ const OtpLogin = () => {
       if (response.status === 200 && response.data.message === "OTP sent successfully.") {
         // alert("OTP sent successfully!");
         localStorage.setItem("otpEmail", email); 
-        navigate("/verify-otp");
+        navigate("/verify-otp-e");
       } else {
         alert("Error sending OTP");
       }
@@ -75,4 +75,4 @@ const OtpLogin = () => {
   );
 };  
 
-export default OtpLogin;
+export default OtpLoginE;

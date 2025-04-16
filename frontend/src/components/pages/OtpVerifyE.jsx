@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const OtpVerify = () => {
+const OtpVerifyE = () => {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const OtpVerify = () => {
         setMessage("OTP Verified Successfully! Redirecting...");
         localStorage.removeItem("otpEmail"); // Clear stored email after successful login
         setTimeout(() => {
-            navigate("/dashboard");
+            navigate("/employee-dashboard");
         }, 2000);
       } else {
         // alert("Invalid OTP. Please try again.");
@@ -70,4 +70,4 @@ const OtpVerify = () => {
   );
 };
 
-export default OtpVerify;
+export default OtpVerifyE;

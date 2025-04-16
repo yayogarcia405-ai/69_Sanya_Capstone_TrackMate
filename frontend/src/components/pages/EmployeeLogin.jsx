@@ -74,7 +74,7 @@ export default function EmployeeLogin() {
           <button type="button" className="text-white underline" onClick={() => navigate("/forgot-password")}>
             Forgot Password?
           </button>
-          <button type="button" className="text-white underline" onClick={() => navigate("/otp-login")}>
+          <button type="button" className="text-white underline" onClick={() => navigate("/otp-login-e")}>
             Login with OTP
           </button>
         </div>
