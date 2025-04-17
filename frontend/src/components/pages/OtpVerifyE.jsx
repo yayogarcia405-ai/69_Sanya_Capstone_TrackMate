@@ -20,7 +20,7 @@ const OtpVerifyE = () => {
     console.log("🔹 Sending OTP Verification Request:", { email, otp });
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/verify-otp", { email, otp });
+      const response = await axios.post(`${import.meta.env.VITE_META_URI}/api/auth/verify-otp`, { email, otp });
       console.log("🔹 Server Response:", response.data);
 
       if (response.data.success) {

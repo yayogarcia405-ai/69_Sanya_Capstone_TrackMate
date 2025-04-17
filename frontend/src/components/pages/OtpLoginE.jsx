@@ -10,7 +10,7 @@ const OtpLoginE = () => {
 
   const handleSendOtp = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/otp-login", { email });
+      const response = await axios.post(`${import.meta.env.VITE_META_URI}/api/auth/otp-login`, { email });
       console.log("Response Data:", response.data);
   
       if (response.status === 200 && response.data.message === "OTP sent successfully.") {

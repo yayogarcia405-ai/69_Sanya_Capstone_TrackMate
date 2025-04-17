@@ -14,13 +14,16 @@ export default function EmployeeLogin() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/employee/login", {
+      const response = await fetch(`${import.meta.env.VITE_META_URI}/api/auth/employee/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       const data = await response.json();
+        localStorage.setItem("userId", data.userId); // e.g., "nahda"
+        localStorage.setItem("role", data.role); // e.g., "employee"
+        localStorage.setItem("token", data.token);
       if (response.ok) {
         navigate("/employee-dashboard");
       } else {

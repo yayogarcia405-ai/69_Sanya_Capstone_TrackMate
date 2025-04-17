@@ -14,7 +14,7 @@ export default function ManagerLogin() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/manager/login", {
+      const response = await fetch(`${import.meta.env.VITE_META_URI}/api/auth/manager/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

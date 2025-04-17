@@ -14,7 +14,8 @@ export default function ManagerDashboard() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/employees");
+        console.log(import.meta.env.VITE_META_URI)
+        const res = await axios.get(`${import.meta.env.VITE_META_URI}/api/auth/employees`);
         setEmployees(res.data);
         setError(null);
       } catch (err) {

@@ -35,7 +35,7 @@ const ManagerProfileSettings = () => {
     }
   
     try {
-      const response = await fetch("http://localhost:5000/api/profile", {
+      const response = await fetch(`${import.meta.env.VITE_META_URI}/api/profile`, {
         method: "POST",
         body: formData,
       });

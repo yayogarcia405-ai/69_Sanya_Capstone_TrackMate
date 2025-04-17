@@ -434,7 +434,7 @@ const ViewSchedule = () => {
 
     const fetchTasks = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/tasks/${employeeId}`);
+        const res = await axios.get(`${import.meta.env.VITE_META_URI}/tasks/${employeeId}`);
         let fetchedTasks = res.data;
 
         // Ensure fetchedTasks is an array
