@@ -55,7 +55,7 @@ const ViewLogs = () => {
               </div>
             )}
             
-            <p><strong>Schedule Time for Check-Out:</strong> {employeeData.scheduledCheckOut || "-"}</p>
+            
             <p><strong>Time of Check-Out:</strong> {employeeData.checkOutTime || "-"}</p>
 
             {/* Location Fix: Corrected Check-In & Check-Out Links */}

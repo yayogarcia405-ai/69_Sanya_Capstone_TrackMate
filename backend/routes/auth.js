@@ -174,34 +174,50 @@ router.post("/manager/login", [
     }
 });
 
-router.post("/employee/login", [
-    body("email").isEmail().withMessage("Invalid email entered."),
-    body("password").notEmpty().withMessage("Password is required."),
-], async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+router.post(
+    "/employee/login",
+    [
+      body("email").isEmail().withMessage("Invalid email entered."),
+      body("password").notEmpty().withMessage("Password is required."),
+    ],
+    async (req, res) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { email, password } = req.body;
-    try {
+      }
+  
+      const { email, password } = req.body;
+      try {
         const user = await User.findOne({ email, roles: "employee" });
         if (!user) {
-            return res.status(400).json({ message: "Invalid credentials." });
+          return res.status(400).json({ message: "Invalid credentials." });
         }
-
+  
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: "Invalid credentials." });
+          return res.status(400).json({ message: "Invalid credentials." });
         }
-
-        res.status(200).json({ message: "Login successful!", user });
-    } catch (err) {
+  
+        // Generate JWT token
+        const token = jwt.sign(
+          { id: user._id, role: "employee" },
+          process.env.JWT_SECRET,
+          { expiresIn: "1h" }
+        );
+  
+        // Return userId, role, and token
+        res.status(200).json({
+          message: "Login successful!",
+          userId: user._id,
+          role: "employee",
+          token,
+        });
+      } catch (err) {
         console.error("Login Error:", err);
         res.status(500).json({ message: "Server error." });
+      }
     }
-});
-
+  );
 // Forgot Password - Send OTP via Email
 router.post("/forgot-password", [
     body("email").isEmail().withMessage("Valid email is required.")
@@ -217,10 +233,12 @@ router.post("/forgot-password", [
         if (!user) return res.status(404).json({ message: "User not found." });
 
         const otp = otpService.generateOTP();
+        console.log(otp);
         otpService.sendOTP(email, otp);
         otpService.storeOTP(email, otp);
-        
+        console.log(otp);
         return res.status(200).json({ message: "OTP sent successfully." });
+        
     } catch (err) {
         console.error("Forgot Password Error:", err);
         return res.status(500).json({ message: "Server error." });

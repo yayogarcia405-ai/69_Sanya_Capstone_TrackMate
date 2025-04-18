@@ -1,54 +1,65 @@
-// client/src/components/EmployeeDashboard.jsx
 import React, { useState, useEffect } from "react";
 import Logoimg from "../images/trackmate.png";
 import { Settings } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const EmployeeDashboard = () => {
-  const [upcomingTasks, setUpcomingTasks] = useState([]);
-  const [completedTasks, setCompletedTasks] = useState([]);
+  const { employeeId } = useParams();
+  const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const today = new Date().toLocaleDateString();
   const navigate = useNavigate();
-
-  // Get userId from localStorage (set during login)
-  const userId = localStorage.getItem("userId"); // e.g., "nahda"
 
   useEffect(() => {
     const fetchTasks = async () => {
-      if (!userId) {
-        setError("Please log in to view tasks");
+      if (!employeeId) {
+        setError('Employee ID not found in URL');
         setLoading(false);
         return;
       }
 
       try {
-        setLoading(true);
-        const response = await fetch(`${import.meta.env.VITE_META_URI}/tasks/${userId}`, {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError('No authentication token found. Please log in again.');
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch(`${import.meta.env.VITE_META_URI}/tasks/${employeeId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         });
-        if (!response.ok) {
-          throw new Error("Failed to fetch tasks");
+
+        const data = await response.json();
+        console.log('Tasks response for employeeId', employeeId, ':', data); // Debug log
+
+        if (response.ok) {
+          setTasks(data);
+        } else {
+          setError(data.error || 'Failed to fetch tasks');
         }
-        const tasks = await response.json();
-        // Filter tasks by status
-        setUpcomingTasks(tasks.filter((task) => task.status === "upcoming"));
-        setCompletedTasks(tasks.filter((task) => task.status === "completed"));
       } catch (err) {
-        setError(err.message);
+        console.error('Fetch error:', err);
+        setError('An error occurred while fetching tasks');
       } finally {
         setLoading(false);
       }
     };
 
     fetchTasks();
-  }, [userId]);
+  }, [employeeId]);
+
+  if (loading) return <div>Loading tasks...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  // Filter tasks by status based on schema
+  const upcomingTasks = tasks.filter(task => task.status === 'upcoming');
+  const completedTasks = tasks.filter(task => task.status === 'completed');
 
   return (
-    <div className="min-h-screen bg-[#c2c0c0] text-black">
+    <div className="bg-[#c2c0c0] min-h-screen flex flex-col items-center">
       {/* Navbar */}
       <nav className="w-full flex flex-col items-center px-8 py-5 bg-[#343A40] shadow-md h-20 relative">
         <div className="flex items-center space-x-4">
@@ -64,63 +75,85 @@ const EmployeeDashboard = () => {
         </button>
       </nav>
 
-      {/* Main Content */}
-      <div className="max-w-5xl mx-auto mt-8 px-6">
-        <h1 className="text-2xl font-bold text-center text-black mb-1">
-          Welcome, {userId || "User"}!
-        </h1>
-        <p className="text-center mb-6 text-white">{today}</p>
+      {/* Schedule Section */}
+      <div className="bg-[#6C757D] p-8 mt-10 rounded-xl w-11/12 max-w-6xl shadow-lg">
+        <h2 className="text-white text-3xl font-bold text-center mb-2">
+          Employee Dashboard - {new Date().toLocaleDateString()}
+        </h2>
+        <p className="text-white text-center mb-6 text-xl">Employee ID: {employeeId}</p>
 
-        {/* Loading and Error States */}
-        {loading && <p className="text-center text-white">Loading tasks...</p>}
-        {error && <p className="text-center text-red-500">{error}</p>}
-
-        {/* Upcoming Tasks */}
-        {!loading && !error && (
-          <div className="mb-8">
-            <h3 className="text-xl font-semibold mb-3">Upcoming Tasks</h3>
-            <div className="space-y-3">
-              {upcomingTasks.length === 0 ? (
-                <p className="text-white">No upcoming tasks.</p>
-              ) : (
-                upcomingTasks.map((task) => (
-                  <div
-                    key={task._id}
-                    className="bg-[#83868a] px-4 py-3 rounded flex justify-between items-center text-white"
-                  >
-                    <p>{task.title}</p>
-                    <a
-                      href="#"
-                      className="text-sm underline text-white hover:text-gray-300"
-                      onClick={() => navigate(`/task/${task._id}`)} // Optional: Navigate to task details
-                    >
-                      View Task
-                    </a>
-                  </div>
-                ))
-              )}
-            </div>
+        {/* Error Message */}
+        {error && (
+          <div className="text-white text-center mb-4 bg-[#495057] p-2 rounded">
+            {error}
           </div>
         )}
 
-        {/* Completed Tasks */}
-        {!loading && !error && (
-          <div>
-            <h3 className="text-xl font-semibold mb-3">Tasks Completed</h3>
-            <div className="space-y-3">
-              {completedTasks.length === 0 ? (
-                <p className="text-white">No completed tasks.</p>
+        {/* Refresh Button */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={async () => {
+              setLoading(true);
+              try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${import.meta.env.VITE_META_URI}/tasks/${employeeId}`, {
+                  headers: { Authorization: `Bearer ${token}` },
+                });
+                const data = await response.json();
+                if (response.ok) setTasks(data);
+                else setError(data.error || 'Failed to fetch tasks');
+              } catch (err) {
+                console.error('Refresh error:', err);
+                setError('An error occurred while refreshing tasks');
+              } finally {
+                setLoading(false);
+              }
+            }}
+            className="bg-[#495057] text-white px-4 py-2 rounded hover:bg-[#343A40]"
+          >
+            Refresh Tasks
+          </button>
+        </div>
+
+        {/* Loading or Content */}
+        {loading ? (
+          <p className="text-white text-center">Loading tasks...</p>
+        ) : (
+          <>
+            {/* Upcoming Tasks */}
+            <div className="bg-[#495057] p-6 rounded-lg">
+              <h3 className="text-white text-xl font-bold">Upcoming Tasks ({upcomingTasks.length})</h3>
+              {upcomingTasks.length === 0 ? (
+                <div className="bg-[#83868a] p-3 my-2 rounded flex justify-between items-center">
+                  <p className="text-gray-300">No upcoming tasks</p>
+                </div>
               ) : (
-                completedTasks.map((task) => (
+                upcomingTasks.map((task) => (
                   <div
-                    key={task._id}
-                    className="bg-[#6C757D] px-4 py-3 rounded flex justify-between items-center text-white"
+                    key={task._id || Math.random()}
+                    className="bg-[#83868a] p-3 my-2 rounded flex justify-between items-center"
                   >
-                    <p>{task.title}</p>
+                    <div>
+                      <span className="text-white block">{task.description || "No description"}</span>
+                      <span className="text-gray-300 text-sm">
+                        {task.date || "No date"} at {task.time || "No time"} -{" "}
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(task.address || '')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-white-400 underline hover:text-blue-300"
+                        >
+                          📍 Open Location in Maps
+                        </a>
+                      </span>
+                    </div>
                     <a
                       href="#"
-                      className="text-sm underline text-white hover:text-gray-300"
-                      onClick={() => navigate(`/task/${task._id}`)}
+                      className="text-gray-300 underline hover:cursor-pointer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(`/task/${task._id}`);
+                      }}
                     >
                       View Task
                     </a>
@@ -128,7 +161,41 @@ const EmployeeDashboard = () => {
                 ))
               )}
             </div>
-          </div>
+
+            {/* Completed Tasks */}
+            <div className="bg-[#495057] p-6 rounded-lg mt-6">
+              <h3 className="text-white text-xl font-bold">Completed Tasks ({completedTasks.length})</h3>
+              {completedTasks.length === 0 ? (
+                <div className="bg-[#83868a] p-3 my-2 rounded flex justify-between items-center">
+                  <p className="text-gray-300">No completed tasks</p>
+                </div>
+              ) : (
+                completedTasks.map((task) => (
+                  <div
+                    key={task._id || Math.random()}
+                    className="bg-[#83868a] p-3 my-2 rounded flex justify-between items-center"
+                  >
+                    <div>
+                      <span className="text-white block">{task.description || "No description"}</span>
+                      <span className="text-gray-300 text-sm">
+                        Completed on {task.completedDate || "N/A"}
+                      </span>
+                    </div>
+                    <a
+                      href="#"
+                      className="text-gray-300 underline hover:cursor-pointer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(`/task/${task._id}`);
+                      }}
+                    >
+                      View Task
+                    </a>
+                  </div>
+                ))
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>

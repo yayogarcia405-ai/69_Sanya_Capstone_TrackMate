@@ -47,7 +47,7 @@ function App() {
         <Route path="/manager-profile" element={<ManagerProfileSettings/>}/>
         <Route path="/help-support" element={<HelpSupport/>}/>
         <Route path="/faq" element={<FAQ/>}/>
-        <Route path="/employee-dashboard" element={<EmployeeDashboard/>}/>
+        <Route path="/employee-dashboard/:employeeId" element={ <EmployeeDashboard />}/>
       </Routes>
     </Router>
   );

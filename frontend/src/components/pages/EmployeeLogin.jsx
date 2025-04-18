@@ -21,11 +21,13 @@ export default function EmployeeLogin() {
       });
 
       const data = await response.json();
-        localStorage.setItem("userId", data.userId); // e.g., "nahda"
+      if (response.ok) {
+        // Store userId, role, and token in localStorage
+        localStorage.setItem("userId", data.userId); // e.g., MongoDB _id
         localStorage.setItem("role", data.role); // e.g., "employee"
         localStorage.setItem("token", data.token);
-      if (response.ok) {
-        navigate("/employee-dashboard");
+        // Redirect to dashboard with userId in URL
+        navigate(`/employee-dashboard/${data.userId}`);
       } else {
         setError(data.message || "Login failed");
       }
@@ -37,8 +39,6 @@ export default function EmployeeLogin() {
   return (
     <div className="flex justify-center items-center h-screen bg-[#c2c0c0]">
       <form className="bg-[#626669] p-8 rounded-lg shadow-md w-96 h-[26rem] flex flex-col justify-center text-white" onSubmit={handleSubmit}>
-        
-        
         {/* Title */}
         <h2 className="text-2xl font-bold mb-6 text-center text-white">Employee Login</h2>
         
@@ -85,4 +85,3 @@ export default function EmployeeLogin() {
     </div>
   );
 };
-  
