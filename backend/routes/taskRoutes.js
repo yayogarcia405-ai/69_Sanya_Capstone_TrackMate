@@ -50,6 +50,31 @@ router.get('/tasks/:employeeId', async (req, res) => {
     }
   });
 
+  // GET task by ID
+router.get('/tasks/:taskId', async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.taskId);
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+    res.status(200).json(task);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch task' });
+  }
+});
+
+// PUT update task status by ID
+router.get('/tasks/id/:taskId', async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.taskId);
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+    res.status(200).json(task);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch task' });
+  }
+});
  // routes/taskRoutes.js
 router.put('/:taskId', async (req, res) => {
   try {

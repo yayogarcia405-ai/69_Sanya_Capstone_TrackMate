@@ -21,6 +21,7 @@ import ManagerProfileSettings from "./components/pages/ManagerProfile";
 import HelpSupport from "./components/pages/HelpSupport";
 import FAQ from "./components/pages/FAQ";
 import EmployeeDashboard from "./components/pages/EmployeeDashboard";
+import ViewTask from "./components/pages/ViewTask";
 
 
 function App() {
@@ -39,7 +40,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-reset-otp" element={<VerifyResetOtp />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/manager-dashboard" element={<ManagerDashboard/>}/>
+        <Route path="/manager-dashboard/:employeeId" element={<ManagerDashboard/>}/>
         <Route path="/manager/add-task/:employeeId" element={<AddTask/>}/>
         <Route path="/manager/view-schedule/:employeeId" element={<ViewSchedule/>}/>
         <Route path="/view-logs" element={<ViewLogs/>}/>
@@ -48,6 +49,7 @@ function App() {
         <Route path="/help-support" element={<HelpSupport/>}/>
         <Route path="/faq" element={<FAQ/>}/>
         <Route path="/employee-dashboard/:employeeId" element={ <EmployeeDashboard />}/>
+        <Route path="/view-task/:taskId" element={<ViewTask/>}/>
       </Routes>
     </Router>
   );

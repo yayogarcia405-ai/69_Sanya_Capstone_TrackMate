@@ -135,7 +135,7 @@ const EmployeeDashboard = () => {
                   >
                     <div>
                       <span className="text-white block">{task.description || "No description"}</span>
-                      <span className="text-gray-300 text-sm">
+                      <span className="text-gray-300 text-lg"> {/* Changed from text-sm to text-lg */}
                         {task.date || "No date"} at {task.time || "No time"} -{" "}
                         <a
                           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(task.address || '')}`}
@@ -152,7 +152,7 @@ const EmployeeDashboard = () => {
                       className="text-gray-300 underline hover:cursor-pointer"
                       onClick={(e) => {
                         e.preventDefault();
-                        navigate(`/task/${task._id}`);
+                        navigate(`/view-task/${task._id}`);
                       }}
                     >
                       View Task
@@ -186,7 +186,7 @@ const EmployeeDashboard = () => {
                       className="text-gray-300 underline hover:cursor-pointer"
                       onClick={(e) => {
                         e.preventDefault();
-                        navigate(`/task/${task._id}`);
+                        navigate(`/view-task/${task._id}`);
                       }}
                     >
                       View Task

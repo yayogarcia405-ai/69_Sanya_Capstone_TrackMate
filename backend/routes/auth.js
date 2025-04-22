@@ -146,34 +146,50 @@ router.post("/employee/signup",  upload.single("document"), [
     }
 });
 
-router.post("/manager/login", [
+router.post(
+  "/manager/login",
+  [
     body("email").isEmail().withMessage("Invalid email entered."),
     body("password").notEmpty().withMessage("Password is required."),
-], async (req, res) => {
+  ],
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ success: false, message: errors.array()[0].msg });
     }
 
     const { email, password } = req.body;
     try {
-        const user = await User.findOne({ email, roles: "manager" });
-        if (!user) {
-            return res.status(400).json({ message: "Invalid credentials." });
-        }
+      const user = await User.findOne({ email, roles: "manager" });
+      if (!user) {
+        return res.status(400).json({ success: false, message: "Invalid credentials." });
+      }
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: "Invalid credentials." });
-        }
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ success: false, message: "Invalid credentials." });
+      }
 
-        res.status(200).json({ message: "Login successful!", user });
+      // Generate JWT Token
+      const token = jwt.sign(
+        { id: user._id, role: user.roles },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      // Return response with userId, role, and token
+      res.status(200).json({
+        success: true,
+        userId: user._id,
+        role: user.roles, // Matches User schema (plural 'roles')
+        token,
+      });
     } catch (err) {
-        console.error("Login Error:", err);
-        res.status(500).json({ message: "Server error." });
+      console.error("Login Error:", err);
+      res.status(500).json({ success: false, message: "Server error." });
     }
-});
-
+  }
+);
 router.post(
     "/employee/login",
     [
@@ -263,38 +279,44 @@ router.post("/otp-login", [
 });
 
 // OTP Login - Verify and Authenticate
-router.post("/verify-otp", [
+router.post(
+  "/verify-otp",
+  [
     body("email").isEmail().withMessage("Valid email is required."),
-    body("otp").notEmpty().withMessage("OTP is required.")
-], 
-async (req, res) => {
-
+    body("otp").notEmpty().withMessage("OTP is required."),
+  ],
+  async (req, res) => {
     const { email, otp } = req.body;
 
     try {
-        const isValidOtp = verifyOTP(email, otp);
-        if (!isValidOtp) {
-            return res.status(400).json({ message: "Invalid or expired OTP" });
-        }
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
+      const isValidOtp = verifyOTP(email, otp);
+      if (!isValidOtp) {
+        return res.status(400).json({ message: "Invalid or expired OTP" });
+      }
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
 
-        // Generate JWT Token
-        const token = jwt.sign(
-            { id: user._id, role: user.roles },
-            process.env.JWT_SECRET,
-            { expiresIn: "1h" }
-        );
-        return res.json({ success: true, message: "OTP verified successfully", token, role: user.roles });
-
+      // Generate JWT Token
+      const token = jwt.sign(
+        { id: user._id, role: user.roles },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+      return res.json({
+        success: true,
+        message: "OTP verified successfully",
+        token,
+        role: user.roles,
+        userId: user._id, // Add userId to response
+      });
     } catch (error) {
-        console.error("Error in OTP verification:", error);
-        return res.status(500).json({ message: "Server error" });
+      console.error("Error in OTP verification:", error);
+      return res.status(500).json({ message: "Server error" });
     }
-
-});
+  }
+);
 
 // // Forgot Password - Send OTP
 // router.post("/forgot-password", async (req, res) => {

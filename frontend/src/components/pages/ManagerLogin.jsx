@@ -22,25 +22,30 @@ export default function ManagerLogin() {
 
       const data = await response.json();
       if (response.ok) {
-        navigate("/manager-dashboard");
+        // Store userId, role, and token in localStorage
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("role", data.role); // Should be "manager"
+        localStorage.setItem("token", data.token);
+        // Redirect to dashboard with userId in URL
+        navigate(`/manager-dashboard/${data.userId}`);
       } else {
         setError(data.message || "Login failed");
       }
     } catch (error) {
-      setError("Server error. Please try again after some time.");
+      setError("Server error. Please try again later.");
     }
   };
 
   return (
     <div className="flex justify-center items-center h-screen bg-[#c2c0c0]">
-      <form className="bg-[#626669] p-8 rounded-lg shadow-md w-96 h-[26rem] flex flex-col justify-center text-white" onSubmit={handleSubmit}>
-  
+      <form
+        className="bg-[#626669] p-8 rounded-lg shadow-md w-96 h-[26rem] flex flex-col justify-center text-white"
+        onSubmit={handleSubmit}
+      >
         {/* Title */}
         <h2 className="text-2xl font-bold mb-6 text-center text-white">Manager Login</h2>
-  
         {/* Error Message */}
         {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
-  
         {/* Email Input */}
         <input
           type="email"
@@ -51,7 +56,6 @@ export default function ManagerLogin() {
           className="w-full px-4 py-3 border rounded-lg mb-4 bg-[#6C757D] text-white placeholder-white"
           required
         />
-  
         {/* Password Input */}
         <input
           type="password"
@@ -62,12 +66,10 @@ export default function ManagerLogin() {
           className="w-full px-4 py-3 border rounded-lg mb-4 bg-[#6C757D] text-white placeholder-white"
           required
         />
-
         {/* Login Button */}
         <button type="submit" className="w-full bg-[#343A40] text-white py-3 rounded-lg hover:bg-[#818181] mb-6">
           Login
         </button>
-  
         {/* Additional Options */}
         <div className="flex justify-between text-sm">
           <button type="button" className="text-white underline" onClick={() => navigate("/forgot-password")}>
@@ -76,21 +78,8 @@ export default function ManagerLogin() {
           <button type="button" className="text-white underline" onClick={() => navigate("/otp-login-m")}>
             Login with OTP
           </button>
-          </div>
+        </div>
       </form>
-    </div>
-  );
-}
-
-export function ManagerDashboard() {
-  return (
-    <div className="h-screen w-full bg-white">
-      <nav className="p-4 bg-gray-100 flex justify-between items-center shadow-md">
-        <div className="text-xl font-bold">Logo</div>
-        <button>
-          <span className="text-black text-2xl">⚙</span>
-        </button>
-      </nav>
     </div>
   );
 }
