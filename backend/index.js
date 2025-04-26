@@ -6,7 +6,6 @@ const PORT = 5000;
 const app = express();
 const authRoutes = require('./routes/auth');
 const taskRoutes=require('./routes/taskRoutes');
-const profileRoutes=require("./routes/managerProfile");
 const { generateOTP, sendOTP, storeOTP, verifyOTP } = require("./utils/otpService");
 const path = require("path");
 const Task = require('./models/Task');
@@ -30,7 +29,6 @@ app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api", taskRoutes)
-app.use("/api/profile", profileRoutes);
 
 // Send OTP via Email
 app.post("/otp-login", async (req, res) => {

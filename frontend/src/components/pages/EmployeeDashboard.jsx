@@ -68,7 +68,7 @@ const EmployeeDashboard = () => {
         </div>
         <button
           className="absolute right-8 top-5 text-white"
-          onClick={() => navigate("/employee-settings")}
+          onClick={() => navigate(`/employee-settings/${employeeId}`)}
           aria-label="Employee Settings"
         >
           <Settings size={28} />
@@ -89,7 +89,7 @@ const EmployeeDashboard = () => {
           </div>
         )}
 
-        {/* Refresh Button */}
+        {/* Refresh Button
         <div className="flex justify-end mb-4">
           <button
             onClick={async () => {
@@ -113,7 +113,7 @@ const EmployeeDashboard = () => {
           >
             Refresh Tasks
           </button>
-        </div>
+        </div> */}
 
         {/* Loading or Content */}
         {loading ? (

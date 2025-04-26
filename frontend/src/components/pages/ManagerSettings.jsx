@@ -2,13 +2,15 @@ import { useNavigate } from "react-router-dom";
 import Logoimg from "../images/trackmate.png";
 import { FaUserCog, FaLanguage, FaQuestionCircle, FaHandsHelping } from "react-icons/fa";
 export default function ManagerSettings() {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
+  const employeeId=localStorage.getItem("userId");
 
   const settingsOptions = [
-    { label: "Profile Settings", route: "/manager-profile", icon: <FaUserCog className="text-xl text-gray-700" /> },
+    // { label: "Profile Settings", route: `/manager-profile/${employeeId}`, icon: <FaUserCog className="text-xl text-gray-700" /> },
     { label: "Language Settings", route: "/language-settings", icon: <FaLanguage className="text-xl text-gray-700" /> },
     { label: "Help & Support", route: "/help-support", icon: <FaHandsHelping className="text-xl text-gray-700" /> },
     { label: "FAQs", route: "/faq", icon: <FaQuestionCircle className="text-xl text-gray-700" /> },
+    { label: "Logout", route: `/manager-logout/${employeeId}`, icon: <FaUserCog className="text-xl text-gray-700" /> },
   ];
 
   return (

@@ -108,7 +108,7 @@ const ViewSchedule = () => {
     if (!taskToRemove) return;
 
     try {
-      const response = await axios.delete(`http://localhost:5000/tasks/${taskToRemove}`);
+      const response = await axios.delete(`${import.meta.env.VITE_META_URI}/tasks/${taskToRemove}`);
       console.log("Delete response:", response); // Debug the response
       if (response.status === 200) {
         setTasks(tasks.filter((task) => task._id !== taskToRemove));
@@ -135,7 +135,7 @@ const ViewSchedule = () => {
   const handleRefreshTasks = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:5000/tasks/${employeeId}`);
+      const res = await axios.get(`${import.meta.env.VITE_META_URI}/tasks/${employeeId}`);
       let fetchedTasks = res.data;
       if (!Array.isArray(fetchedTasks)) {
         console.warn("Response is not an array, attempting to parse:", fetchedTasks);
@@ -170,7 +170,7 @@ const ViewSchedule = () => {
         </div>
         <button
           className="absolute right-8 top-5 text-white"
-          onClick={() => navigate("/manager-settings")}
+          onClick={() => navigate(`/manager-settings/${employeeId}`)}
         >
           <Settings size={28} />
         </button>
@@ -190,7 +190,7 @@ const ViewSchedule = () => {
           </div>
         )}
 
-        {/* Refresh Button */}
+        {/* Refresh Button
         <div className="flex justify-end mb-4">
           <button
             onClick={handleRefreshTasks}
@@ -198,7 +198,7 @@ const ViewSchedule = () => {
           >
             Refresh Tasks
           </button>
-        </div>
+        </div> */}
 
         {/* Loading or Content */}
         {loading ? (
@@ -269,9 +269,7 @@ const ViewSchedule = () => {
                       <span className="text-white block">
                         {task.description || "No description"}
                       </span>
-                      <span className="text-gray-300 text-sm">
-                        Completed on {task.completedDate || "N/A"}
-                      </span>
+                      
                     </div>
                     <button
                       className="text-gray-300 underline hover:cursor-pointer"

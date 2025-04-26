@@ -17,12 +17,14 @@ import AddTask from "./components/pages/AddTask";
 import ViewSchedule from "./components/pages/ViewSchedule";
 import ViewLogs from "./components/pages/ViewLogs";
 import ManagerSettings from "./components/pages/ManagerSettings";
-import ManagerProfileSettings from "./components/pages/ManagerProfile";
 import HelpSupport from "./components/pages/HelpSupport";
 import FAQ from "./components/pages/FAQ";
 import EmployeeDashboard from "./components/pages/EmployeeDashboard";
 import ViewTask from "./components/pages/ViewTask";
 import EmployeeSettings from "./components/pages/EmployeeSettings";
+import LanguageSettings from "./components/pages/LanguageSettings";
+import LogoutPage from "./components/pages/ManagerLogout";
+import ELogoutPage from "./components/pages/EmployeeLogout";
 
 
 function App() {
@@ -45,13 +47,15 @@ function App() {
         <Route path="/manager/add-task/:employeeId" element={<AddTask/>}/>
         <Route path="/manager/view-schedule/:employeeId" element={<ViewSchedule/>}/>
         <Route path="/view-logs/:taskId" element={<ViewLogs/>}/>
-        <Route path="/manager-settings" element={<ManagerSettings/>}/>
-        <Route path="/manager-profile" element={<ManagerProfileSettings/>}/>
+        <Route path="/manager-settings/:employeeId" element={<ManagerSettings/>}/>
         <Route path="/help-support" element={<HelpSupport/>}/>
         <Route path="/faq" element={<FAQ/>}/>
         <Route path="/employee-dashboard/:employeeId" element={ <EmployeeDashboard />}/>
         <Route path="/view-task/:taskId" element={<ViewTask/>}/>
-        <Route path="/employee-settings" element={<EmployeeSettings/>}/>
+        <Route path="/employee-settings/:employeeId" element={<EmployeeSettings/>}/>
+        <Route path="/language-settings" element={<LanguageSettings/>}/>
+        <Route path="/manager-logout/:employeeId" element={<LogoutPage/>}/>
+        <Route path="/employee-logout/:employeeId" element={<ELogoutPage/>}/>
       </Routes>
     </Router>
   );

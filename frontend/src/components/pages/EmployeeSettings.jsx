@@ -4,12 +4,13 @@ import { FaUserCog, FaLanguage, FaQuestionCircle, FaHandsHelping } from "react-i
 
 export default function EmployeeSettings() {
   const navigate = useNavigate();
+  const employeeId=localStorage.getItem("userId");
 
   const settingsOptions = [
-    { label: "Profile Settings", route: "/employee-profile", icon: <FaUserCog className="text-xl text-gray-700" /> },
     { label: "Language Settings", route: "/language-settings", icon: <FaLanguage className="text-xl text-gray-700" /> },
     { label: "Help & Support", route: "/help-support", icon: <FaHandsHelping className="text-xl text-gray-700" /> },
     { label: "FAQs", route: "/faq", icon: <FaQuestionCircle className="text-xl text-gray-700" /> },
+    { label: "Logout", route: `/employee-logout/${employeeId}`, icon: <FaUserCog className="text-xl text-gray-700" /> },
   ];
 
   return (

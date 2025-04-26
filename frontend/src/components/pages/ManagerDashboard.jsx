@@ -10,6 +10,7 @@ export default function ManagerDashboard() {
   const [activeTab, setActiveTab] = useState("task-assignment");
   const [employees, setEmployees] = useState([]);
   const [error, setError] = useState(null);
+  const employeeId=localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -37,7 +38,7 @@ export default function ManagerDashboard() {
         </div>
         <button
           className="absolute right-8 top-5 text-white"
-          onClick={() => navigate("/manager-settings")}
+          onClick={() => navigate(`/manager-settings/${employeeId}`)}
           aria-label="Manager Settings"
         >
           <Settings size={28} />
@@ -94,7 +95,7 @@ const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
 
   const handleDepartmentChange = async (_id, department) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/auth/employees/${_id}/department`, {
+      const res = await fetch(`${import.meta.env.VITE_META_URI}/api/auth/employees/${_id}/department`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ department }),
@@ -136,7 +137,7 @@ const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
             {emp.document?.path && (
               emp.document.path.match(/\.(jpg|jpeg|png|gif)$/i) ? (
                 <img
-                  src={`http://localhost:5000${emp.document.path}`}
+                  src={`${import.meta.env.VITE_META_URI}${emp.document.path}`}
                   alt={`${emp.username}'s document`}
                   className="h-14 w-14 rounded-full object-cover border-2 border-gray-300"
                   onError={(e) => {
@@ -208,7 +209,7 @@ const TaskAssignment = React.memo(({ employees }) => {
             {emp.document?.path && (
               emp.document.path.match(/\.(jpg|jpeg|png|gif)$/i) ? (
                 <img
-                  src={`http://localhost:5000${emp.document.path}`}
+                  src={`${import.meta.env.VITE_META_URI}${emp.document.path}`}
                   alt={`${emp.username}'s document`}
                   className="h-14 w-14 rounded-full object-cover border-2 border-gray-300"
                   onError={(e) => {

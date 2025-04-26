@@ -44,7 +44,7 @@ export default function EmployeeSignup() {
         console.log(pair[0],pair[1])
       }
 
-      const response = await fetch("http://localhost:5000/api/auth/employee/signup", {
+      const response = await fetch(`${import.meta.env.VITE_META_URI}/api/auth/employee/signup`, {
         method: "POST",
         body: formDataToSend, // No Content-Type header needed - browser sets it automatically
       });
