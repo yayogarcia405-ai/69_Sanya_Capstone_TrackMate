@@ -17,7 +17,7 @@ export default function ManagerSignup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+ 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match.");
       return;

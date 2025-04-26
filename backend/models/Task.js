@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const taskSchema = new mongoose.Schema({
   employeeId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "NewUser",
+    ref: 'NewUser',
     required: true,
   },
   date: {
@@ -32,13 +32,21 @@ const taskSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["upcoming", "completed"],
-    default: "upcoming",
+    enum: ['upcoming', 'completed'],
+    default: 'upcoming',
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
+  log: {
+    checkInTime: { type: Date, default: null },
+    checkOutTime: { type: Date, default: null },
+    checkInPhoto: { type: String, default: null },
+    checkOutPhoto: { type: String, default: null },
+    checkInLocation: { type: String, default: null },
+    checkOutLocation: { type: String, default: null },
+  },
 });
 
-module.exports = mongoose.model("Task", taskSchema);
+module.exports = mongoose.models.Task || mongoose.model('Task', taskSchema);

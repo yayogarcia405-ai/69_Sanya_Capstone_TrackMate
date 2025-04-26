@@ -26,7 +26,7 @@ const EmployeeDashboard = () => {
           return;
         }
 
-        const response = await fetch(`${import.meta.env.VITE_META_URI}/tasks/${employeeId}`, {
+        const response = await fetch(`${import.meta.env.VITE_META_URI}/api/tasks/${employeeId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -57,7 +57,7 @@ const EmployeeDashboard = () => {
   // Filter tasks by status based on schema
   const upcomingTasks = tasks.filter(task => task.status === 'upcoming');
   const completedTasks = tasks.filter(task => task.status === 'completed');
-
+  
   return (
     <div className="bg-[#c2c0c0] min-h-screen flex flex-col items-center">
       {/* Navbar */}
@@ -137,14 +137,22 @@ const EmployeeDashboard = () => {
                       <span className="text-white block">{task.description || "No description"}</span>
                       <span className="text-gray-300 text-lg"> {/* Changed from text-sm to text-lg */}
                         {task.date || "No date"} at {task.time || "No time"} -{" "}
-                        <a
-                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(task.address || '')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-white-400 underline hover:text-blue-300"
-                        >
-                          📍 Open Location in Maps
-                        </a>
+                        {task.address && task.address.startsWith("http") ? (
+                            <a
+                              href={task.address}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                window.open(task.address, "_blank", "noopener,noreferrer");
+                              }}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-white-400 underline hover:text-blue-300"
+                            >
+                              📍 Open Location in Maps
+                            </a>
+                          ) : (
+                            <span className="text-gray-400">📍 No location link</span>
+                          )}
                       </span>
                     </div>
                     <a
@@ -170,6 +178,7 @@ const EmployeeDashboard = () => {
                   <p className="text-gray-300">No completed tasks</p>
                 </div>
               ) : (
+                
                 completedTasks.map((task) => (
                   <div
                     key={task._id || Math.random()}
@@ -177,19 +186,17 @@ const EmployeeDashboard = () => {
                   >
                     <div>
                       <span className="text-white block">{task.description || "No description"}</span>
-                      <span className="text-gray-300 text-sm">
-                        Completed on {task.completedDate || "N/A"}
-                      </span>
+                      
                     </div>
                     <a
                       href="#"
                       className="text-gray-300 underline hover:cursor-pointer"
                       onClick={(e) => {
                         e.preventDefault();
-                        navigate(`/view-task/${task._id}`);
+                        navigate(`/view-logs/${task._id}`);
                       }}
                     >
-                      View Task
+                      View Logs
                     </a>
                   </div>
                 ))

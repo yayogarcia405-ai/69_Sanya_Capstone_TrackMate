@@ -13,6 +13,8 @@ const ViewTask = () => {
   const [checkOutPhoto, setCheckOutPhoto] = useState(null);
   const [checkInTime, setCheckInTime] = useState(null);
   const [checkOutTime, setCheckOutTime] = useState(null);
+  const [checkInLocation, setCheckInLocation] = useState(null);
+  const [checkOutLocation, setCheckOutLocation] = useState(null);
   const checkInVideoRef = useRef(null);
   const checkOutVideoRef = useRef(null);
   const checkInCanvasRef = useRef(null);
@@ -36,20 +38,33 @@ const ViewTask = () => {
           return;
         }
 
-        const response = await fetch(`${import.meta.env.VITE_META_URI}/tasks/id/${taskId}`, {
+        const response = await fetch(`${import.meta.env.VITE_META_URI}/api/tasks`, {
+          method: "POST",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+          body: JSON.stringify({ taskId }),
         });
 
-        if (!response.ok) throw new Error("Failed to fetch task");
+        if (!response.ok) {
+          const text = await response.text();
+          console.error("Response status:", response.status, "Response text:", text);
+          let errorMessage = "Failed to fetch task";
+          if (response.status === 400) errorMessage = "Invalid task ID format";
+          else if (response.status === 403) errorMessage = "Unauthorized: Task not assigned to you";
+          else if (response.status === 404) errorMessage = "Task not found";
+          throw new Error(errorMessage);
+        }
 
         const data = await response.json();
-        console.log("Fetched task data for taskId", taskId, ":", data); // Enhanced debug log
+        console.log("Fetched task data for taskId", taskId, ":", data);
+        console.log("Task Employee ID:", data.employeeId);
+        console.log(token)
         setTask(data);
       } catch (err) {
         console.error("Fetch error:", err);
-        setError("An error occurred while fetching the task");
+        setError(err.message || "An error occurred while fetching the task");
       } finally {
         setLoading(false);
       }
@@ -88,56 +103,133 @@ const ViewTask = () => {
   };
 
   const startCamera = (videoRef, setReady) => {
-    stopStream(videoRef, setReady); // ensure previous streams are closed
+    stopStream(videoRef, setReady);
     initializeStream(videoRef, setReady);
   };
 
-  const capturePhoto = (canvasRef, setPhoto, videoRef, setTime, setReady) => {
+  const getCurrentLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error("Geolocation is not supported by your browser."));
+      }
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const gmapsLink = `https://maps.google.com/?q=${latitude},${longitude}`;
+          resolve(gmapsLink);
+        },
+        (err) => {
+          reject(new Error(`Failed to get location: ${err.message}`));
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    });
+  };
+
+  const capturePhoto = async (canvasRef, setPhoto, videoRef, setTime, setReady, setLocation) => {
     if (videoRef.current && videoRef.current.readyState >= 2) {
       const context = canvasRef.current.getContext("2d");
       context.drawImage(videoRef.current, 0, 0, 300, 225);
       const imageDataUrl = canvasRef.current.toDataURL("image/jpeg");
       setPhoto(imageDataUrl);
       setTime(new Date().toLocaleString());
+
+      try {
+        const locationLink = await getCurrentLocation();
+        setLocation(locationLink);
+      } catch (err) {
+        console.error("Location error:", err);
+        setError(err.message);
+      }
     } else {
       setError("Video not ready for capture.");
     }
     stopStream(videoRef, setReady);
   };
 
-  const handleSave = async () => {
+  const handleTaskCompleted = async () => {
     try {
       const token = localStorage.getItem("token");
+      const employeeId = localStorage.getItem("userId");
+      console.log("Employee ID from localStorage:", employeeId);
+      console.log("Task Employee ID:", task?.employeeId);
+
+      if (!employeeId) {
+        setError("Employee ID not found in localStorage. Please log in again.");
+        return;
+      }
       if (!checkInPhoto || !checkOutPhoto) {
-        alert("Capture both Check-In and Check-Out photos!");
+        setError("Capture both Check-In and Check-Out photos!");
+        return;
+      }
+      if (!checkInLocation || !checkOutLocation) {
+        setError("Location data is missing for Check-In or Check-Out!");
+        return;
+      }
+      if (!task || !task.employeeId) {
+        setError("Task data or Employee ID not found for this task.");
         return;
       }
 
-      await fetch(`${import.meta.env.VITE_META_URI}/tasks/id/${taskId}`, {
+      const updateResponse = await fetch(`${import.meta.env.VITE_META_URI}/api/tasks/${taskId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status: "Completed", checkInTime, checkOutTime }),
+        body: JSON.stringify({
+          status: "completed",
+          employeeId,
+          checkInTime,
+          checkOutTime,
+          checkInLocation,
+          checkOutLocation,
+          checkInPhoto,
+          checkOutPhoto
+        }),
       });
 
-      await fetch(`${import.meta.env.VITE_META_URI}/tasks/id/${taskId}/photo/check-in`, {
+      if (!updateResponse.ok) {
+        const errorData = await updateResponse.json();
+        throw new Error(errorData.error || "Failed to update task status");
+      }
+
+      const checkInPhotoResponse = await fetch(`${import.meta.env.VITE_META_URI}/api/tasks/${taskId}/photo/check-in`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: checkInPhoto.split(",")[1],
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ photo: checkInPhoto.split(",")[1] }),
       });
 
-      await fetch(`${import.meta.env.VITE_META_URI}/tasks/id/${taskId}/photo/check-out`, {
+      if (!checkInPhotoResponse.ok) {
+        const errorData = await checkInPhotoResponse.json();
+        throw new Error(errorData.error || "Failed to upload Check-In photo");
+      }
+
+      const checkOutPhotoResponse = await fetch(`${import.meta.env.VITE_META_URI}/api/tasks/${taskId}/photo/check-out`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: checkOutPhoto.split(",")[1],
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ photo: checkOutPhoto.split(",")[1] }),
       });
 
-      alert("Task completed and photos uploaded!");
+      if (!checkOutPhotoResponse.ok) {
+        const errorData = await checkOutPhotoResponse.json();
+        throw new Error(errorData.error || "Failed to upload Check-Out photo");
+      }
+
+      alert("Task marked as completed, photos uploaded, and locations saved!");
+      navigate(`/employee-dashboard/${employeeId}`, { replace: true });
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } catch (err) {
-      console.error("Save error:", err);
-      alert("Error saving task or uploading photos.");
+      console.error("Task completion error:", err);
+      setError(err.message || "Error marking task as completed or uploading photos/locations.");
     }
   };
 
@@ -168,9 +260,24 @@ const ViewTask = () => {
       </nav>
       <div className="bg-[#83868a] mt-10 p-8 rounded-xl w-11/12 max-w-4xl shadow-lg text-white">
         <h2 className="text-center text-3xl font-bold mb-2">Task Details</h2>
-
+        {task && (
+          <div className="mb-6">
+            {task.locationLink && (
+              <p className="text-lg">
+                <strong>Location:</strong>{" "}
+                <a
+                  href={task.locationLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-300 underline hover:text-blue-500"
+                >
+                  View on Google Maps
+                </a>
+              </p>
+            )}
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Check-In Section */}
           <div>
             <h3 className="text-xl font-semibold mb-4">Check-In</h3>
             <button
@@ -180,11 +287,11 @@ const ViewTask = () => {
               Open Camera
             </button>
             <video ref={checkInVideoRef} autoPlay style={{ display: checkInPhoto ? "none" : "block", width: "300px" }} />
-            <canvas ref={checkInCanvasRef} style={{ display: "none", width: "300px" }} />
+            <canvas ref={checkInCanvasRef} style={{ display: "none", width: "300px", height: "225px" }} width="300" height="225" />
             {checkInPhoto && <img src={checkInPhoto} alt="Check-In" style={{ width: "300px", marginTop: "10px" }} />}
             <button
               onClick={() =>
-                capturePhoto(checkInCanvasRef, setCheckInPhoto, checkInVideoRef, setCheckInTime, setIsCheckInReady)
+                capturePhoto(checkInCanvasRef, setCheckInPhoto, checkInVideoRef, setCheckInTime, setIsCheckInReady, setCheckInLocation)
               }
               className="w-full mt-3 py-2 rounded bg-[#6C757D] hover:bg-[#495057]"
               disabled={!isCheckInReady}
@@ -193,9 +300,20 @@ const ViewTask = () => {
             </button>
             {checkInPhoto && <p className="text-green-500 mt-2">Check-In photo captured!</p>}
             {checkInTime && <p className="text-white mt-2">Check-In Time: {checkInTime}</p>}
+            {checkInLocation && (
+              <p className="text-white mt-2">
+                Check-In Location:{" "}
+                <a
+                  href={checkInLocation}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-300 underline hover:text-blue-500"
+                >
+                  View on Google Maps
+                </a>
+              </p>
+            )}
           </div>
-
-          {/* Check-Out Section */}
           <div>
             <h3 className="text-xl font-semibold mb-4">Check-Out</h3>
             <button
@@ -205,11 +323,11 @@ const ViewTask = () => {
               Open Camera
             </button>
             <video ref={checkOutVideoRef} autoPlay style={{ display: checkOutPhoto ? "none" : "block", width: "300px" }} />
-            <canvas ref={checkOutCanvasRef} style={{ display: "none", width: "300px" }} />
+            <canvas ref={checkOutCanvasRef} style={{ display: "none", width: "300px", height: "225px" }} width="300" height="225" />
             {checkOutPhoto && <img src={checkOutPhoto} alt="Check-Out" style={{ width: "300px", marginTop: "10px" }} />}
             <button
               onClick={() =>
-                capturePhoto(checkOutCanvasRef, setCheckOutPhoto, checkOutVideoRef, setCheckOutTime, setIsCheckOutReady)
+                capturePhoto(checkOutCanvasRef, setCheckOutPhoto, checkOutVideoRef, setCheckOutTime, setIsCheckOutReady, setCheckOutLocation)
               }
               className="w-full mt-3 py-2 rounded bg-[#6C757D] hover:bg-[#495057]"
               disabled={!isCheckOutReady}
@@ -218,14 +336,26 @@ const ViewTask = () => {
             </button>
             {checkOutPhoto && <p className="text-green-500 mt-2">Check-Out photo captured!</p>}
             {checkOutTime && <p className="text-white mt-2">Check-Out Time: {checkOutTime}</p>}
+            {checkOutLocation && (
+              <p className="text-white mt-2">
+                Check-Out Location:{" "}
+                <a
+                  href={checkOutLocation}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-300 underline hover:text-blue-500"
+                >
+                  View on Google Maps
+                </a>
+              </p>
+            )}
           </div>
         </div>
-
         <button
-          onClick={handleSave}
+          onClick={handleTaskCompleted}
           className="mt-6 bg-[#495057] text-white py-2 px-6 rounded hover:bg-[#343A40] block mx-auto"
         >
-          Save Task
+          Task Completed
         </button>
       </div>
     </div>

@@ -25,18 +25,30 @@ const OtpVerifyE = () => {
 
       if (response.data.success) {
         setMessage("OTP Verified Successfully! Redirecting...");
+
+        // Extract userId (handle different field names)
+        const userId = response.data.userId || response.data._id || response.data.id;
+        if (!userId) {
+          console.error("🔹 Error: userId not found in response");
+          setMessage("Error: User ID not returned by server. Contact support.");
+          return;
+        }
+
         // Store userId, role, and token in localStorage
-        localStorage.setItem("userId", response.data.userId);
+        localStorage.setItem("userId", userId);
         localStorage.setItem("role", response.data.role);
         localStorage.setItem("token", response.data.token);
         localStorage.removeItem("otpEmail"); // Clear stored email
+
+        console.log("🔹 Navigating to:", `/employee-dashboard/${userId}`);
         setTimeout(() => {
-          navigate(`/employee-dashboard/${response.data.userId}`); // Navigate with userId
+          navigate(`/employee-dashboard/${userId}`); // Navigate with userId
         }, 2000);
       } else {
-        setMessage("Invalid OTP. Please try again.");
+        setMessage(response.data.message || "Invalid OTP. Please try again.");
       }
     } catch (error) {
+      console.error("🔹 OTP Verification Error:", error.response?.data || error.message);
       setMessage(error.response?.data?.message || "Error verifying OTP");
     }
   };
@@ -45,7 +57,11 @@ const OtpVerifyE = () => {
     <div className="flex justify-center items-center h-screen bg-[#c2c0c0]">
       <form className="bg-[#626669] p-6 rounded-lg shadow-md w-96 text-white" onSubmit={handleVerifyOtp}>
         <h2 className="text-xl font-bold mb-4 text-center text-white">Verify OTP</h2>
-        {message && <p className={`text-sm text-center mb-3 ${message.includes("Success") ? "text-green-400" : "text-red-400"}`}>{message}</p>}
+        {message && (
+          <p className={`text-sm text-center mb-3 ${message.includes("Success") ? "text-green-400" : "text-red-400"}`}>
+            {message}
+          </p>
+        )}
 
         <input
           type="email"

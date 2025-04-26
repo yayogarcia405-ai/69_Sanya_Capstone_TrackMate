@@ -22,6 +22,7 @@ import HelpSupport from "./components/pages/HelpSupport";
 import FAQ from "./components/pages/FAQ";
 import EmployeeDashboard from "./components/pages/EmployeeDashboard";
 import ViewTask from "./components/pages/ViewTask";
+import EmployeeSettings from "./components/pages/EmployeeSettings";
 
 
 function App() {
@@ -43,13 +44,14 @@ function App() {
         <Route path="/manager-dashboard/:employeeId" element={<ManagerDashboard/>}/>
         <Route path="/manager/add-task/:employeeId" element={<AddTask/>}/>
         <Route path="/manager/view-schedule/:employeeId" element={<ViewSchedule/>}/>
-        <Route path="/view-logs" element={<ViewLogs/>}/>
+        <Route path="/view-logs/:taskId" element={<ViewLogs/>}/>
         <Route path="/manager-settings" element={<ManagerSettings/>}/>
         <Route path="/manager-profile" element={<ManagerProfileSettings/>}/>
         <Route path="/help-support" element={<HelpSupport/>}/>
         <Route path="/faq" element={<FAQ/>}/>
         <Route path="/employee-dashboard/:employeeId" element={ <EmployeeDashboard />}/>
         <Route path="/view-task/:taskId" element={<ViewTask/>}/>
+        <Route path="/employee-settings" element={<EmployeeSettings/>}/>
       </Routes>
     </Router>
   );

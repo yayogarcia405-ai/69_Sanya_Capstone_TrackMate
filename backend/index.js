@@ -9,21 +9,27 @@ const taskRoutes=require('./routes/taskRoutes');
 const profileRoutes=require("./routes/managerProfile");
 const { generateOTP, sendOTP, storeOTP, verifyOTP } = require("./utils/otpService");
 const path = require("path");
-
-
-app.use(express.json());
-app.use(cors());
+const Task = require('./models/Task');
+app.use(express.json({ limit: '20mb' }));
+// app.use((req, res, next) => {
+//     console.log(`Incoming request: ${req.method} ${req.url}`); // Debug
+//     console.log("Request headers:", req.headers); // Debug
+//     next();
+//   });
+app.use(cors({
+    origin: 'http://localhost:5173', // Replace with your frontend URL (Vite default)
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// app.use(express.text({ type: '*/*', limit: '20mb' }));
+app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("Database connected."))
-    .catch((err) => console.log("Error connecting to database. Error:", err));
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/", taskRoutes)
+app.use("/api", taskRoutes)
 app.use("/api/profile", profileRoutes);
 
 // Send OTP via Email
@@ -59,6 +65,26 @@ app.post("/verify-otp", (req, res) => {
         res.status(400).json({ error: "Invalid or expired OTP" });
     }
 });
+
+// Error handling for uncaught exceptions
+// process.on('uncaughtException', (error) => {
+//     console.error('Uncaught Exception:', error);
+//     process.exit(1);
+//   });
+  
+//   process.on('unhandledRejection', (reason, promise) => {
+//     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+//   });
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log("Database connected.")
+        console.log('Connected to DB:', mongoose.connection.name);
+    })
+    .catch((err) => console.log("Error connecting to database. Error:", err));
+    
+
 
 // Start the server
 app.listen(PORT, () => {

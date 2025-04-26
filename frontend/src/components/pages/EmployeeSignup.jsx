@@ -31,6 +31,7 @@ export default function EmployeeSignup() {
     try {
       const formDataToSend = new FormData();
       formDataToSend.append("username", formData.name);
+
       formDataToSend.append("email", formData.email);
       formDataToSend.append("password", formData.password);
       formDataToSend.append("role", "employee");
@@ -39,8 +40,11 @@ export default function EmployeeSignup() {
       if (documentFile) {
         formDataToSend.append("document", documentFile);
       }
+      for(let pair of formDataToSend.entries()){
+        console.log(pair[0],pair[1])
+      }
 
-      const response = await fetch(`${import.meta.env.VITE_META_URI}/api/auth/employee/signup`, {
+      const response = await fetch("http://localhost:5000/api/auth/employee/signup", {
         method: "POST",
         body: formDataToSend, // No Content-Type header needed - browser sets it automatically
       });

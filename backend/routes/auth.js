@@ -9,9 +9,12 @@ const {verifyOTP}=require("../utils/otpService")
 const app = express();
 const multer = require("multer");
 const fs=require("fs");
+const path = require('path');
 
-app.use(express.json()); 
-app.use(express.urlencoded({ extended: true }));
+
+// app.use(express.json()); 
+// app.use(express.urlencoded({ extended: true }));
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, "uploads/"); 
@@ -23,6 +26,9 @@ const storage = multer.diskStorage({
   });
   
 const upload = multer({ storage });
+
+
+
 router.get("/employees", async (req, res) => {
     try {
       const employees = await User.find({ roles: "employee" }).select("-password"); // hide password
@@ -69,83 +75,75 @@ router.post("/manager/signup", [
 });
 
 router.post("/employee/signup",  upload.single("document"), [
-    body("username").notEmpty().withMessage("Username cannot be empty"),
-    body("email").isEmail().withMessage("Valid email is required."),
-    body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters."),
-    body("role").equals("employee").withMessage("Role must be 'employee'.")
+  body("username").notEmpty().withMessage("Username cannot be empty"),
+  body("email").isEmail().withMessage("Valid email is required."),
+  body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters."),
+  body("role").equals("employee").withMessage("Role must be 'employee'.")
 ], async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+  }
 
-    const { username, email, password, role } = req.body;
-    try {
-        if (!req.file){
-            return res.status(400).json({
-                success: false, 
-                message: "Document is required. Please upload a valid file.",
-                field: "document"
-            })
-        }
-        let user = await User.findOne({ email });
-        if (user) return res.status(400).json({ message: "Email already registered." });
+  const { username, email, password, role } = req.body;
+  try {
+      let user = await User.findOne({ email });
+      if (user) return res.status(400).json({ message: "Email already registered." });
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        let document = null;
-        if (req.file) {
-            // Validate file type and size if needed
-            const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
-            if (!allowedTypes.includes(req.file.mimetype)) {
-                return res.status(400).json({
-                    message: "Invalid file type. Only PDF, JPEG, and PNG are allowed.",
-                    field: "document"
-                });
-            }
+      const hashedPassword = await bcrypt.hash(password, 10);
+      let document = null;
+      if (req.file) {
+          // Validate file type and size if needed
+          const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+          if (!allowedTypes.includes(req.file.mimetype)) {
+              return res.status(400).json({
+                  message: "Invalid file type. Only PDF, JPEG, and PNG are allowed.",
+                  field: "document"
+              });
+          }
 
-            // Max size 5MB
-            if (req.file.size > 5 * 1024 * 1024) {
-                return res.status(400).json({
-                    message: "File size too large. Maximum 5MB allowed.",
-                    field: "document"
-                });
-            }
+          // Max size 5MB
+          if (req.file.size > 5 * 1024 * 1024) {
+              return res.status(400).json({
+                  message: "File size too large. Maximum 5MB allowed.",
+                  field: "document"
+              });
+          }
 
-            document = {
-                filename: req.file.originalname,
-                path: `/uploads/${req.file.filename}`, // Use forward slash for web compatibility
-                mimetype: req.file.mimetype,
-                size: req.file.size,
-                uploadedAt: new Date()
-            };
-        }
-        user = new User({ username, email, password: hashedPassword, roles: role, document});
-        await user.save();
-        const userResponse = user.toObject();
-        delete userResponse.password;
-        res.status(201).json({ 
-            success: true,
-            message: "Employee registered successfully!",
-            user: userResponse
-        });
-    } catch (err) {
-        console.error("Signup Error:", err);
-        
-        // Clean up uploaded file if error occurred
-        if (req.file) {
-            fs.unlink(req.file.path, (unlinkErr) => {
-                if (unlinkErr) console.error("Error deleting uploaded file:", unlinkErr);
-            });
-        }
+          document = {
+              filename: req.file.originalname,
+              path: `/uploads/${req.file.filename}`, // Use forward slash for web compatibility
+              mimetype: req.file.mimetype,
+              size: req.file.size,
+              uploadedAt: new Date()
+          };
+      }
+      user = new User({ username, email, password: hashedPassword, roles: role, document});
+      await user.save();
+      const userResponse = user.toObject();
+      delete userResponse.password;
+      res.status(201).json({ 
+          success: true,
+          message: "Employee registered successfully!",
+          user: userResponse
+      });
+  } catch (err) {
+      console.error("Signup Error:", err);
+      
+      // Clean up uploaded file if error occurred
+      if (req.file) {
+          fs.unlink(req.file.path, (unlinkErr) => {
+              if (unlinkErr) console.error("Error deleting uploaded file:", unlinkErr);
+          });
+      }
 
-        res.status(500).json({ 
-            success: false,
-            message: "Server error during registration.",
-            error: process.env.NODE_ENV === 'development' ? err.message : undefined
-        });
-    }
+      res.status(500).json({ 
+          success: false,
+          message: "Server error during registration.",
+          error: process.env.NODE_ENV === 'development' ? err.message : undefined
+      });
+  }
 });
-
 router.post(
   "/manager/login",
   [
@@ -318,27 +316,6 @@ router.post(
   }
 );
 
-// // Forgot Password - Send OTP
-// router.post("/forgot-password", async (req, res) => {
-//     const { email } = req.body;
-
-//     try {
-//         const user = await User.findOne({ email });
-//         if (!user) {
-//             return res.status(404).json({ message: "User not found" });
-//         }
-
-//         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-//         storeOTP(email, otp); // Store OTP with expiry
-//         await sendOTP(email, otp); // Send OTP via email
-
-//         return res.json({ message: "OTP sent to your email" });
-//     } catch (error) {
-//         console.error("Error in forgot password:", error);
-//         return res.status(500).json({ message: "Server error" });
-//     }
-// });
-
 // Verify OTP for Password Reset
 router.post("/verify-reset-otp", async (req, res) => {
     const { email, otp } = req.body;
@@ -402,24 +379,29 @@ router.put("/employees/:id/department", async (req, res) => {
     }
   });
 
-router.delete('/employees/:id', async (req, res) => {
-    try {
-      const { id } = req.params;
-      console.log('Attempting to delete employee with ID:', id);
-      
-      // Replace with your DB logic (e.g., MongoDB, PostgreSQL, etc.)
-      const deletedEmployee = await User.findByIdAndDelete(id);
-      
-      if (!deletedEmployee) {
-        console.log('User not found for deletion');
-        return res.status(404).json({ message: 'Employee not found' });
-      }
-      console.log('User deleted successfully');
-      res.status(200).json({ message: 'Employee deleted successfully' });
-    } catch (error) {
-      console.error('Error while deleting user:', error);
-      res.status(500).json({ message: 'Server error'});
-    }
-  });
-  
+  // Middleware to check JWT
+const authMiddleware = (req, res, next) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: 'No token provided' });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
+// DELETE user by ID
+router.delete('/users/:employeeId', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.employeeId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.status(200).json({ message: 'User deleted' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to delete user' });
+  }
+});
 module.exports = router;

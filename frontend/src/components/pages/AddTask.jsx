@@ -22,7 +22,7 @@ const AddTask = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${import.meta.env.VITE_META_URI}/add-tasks`, {
+      await axios.post(`${import.meta.env.VITE_META_URI}/api/add-tasks`, {
       ...formData,
       employeeId,
     });
