@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Logoimg from "../images/trackmate.png";
 import { Settings } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const EmployeeDashboard = () => {
   const { employeeId } = useParams();
@@ -9,6 +11,56 @@ const EmployeeDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  // Motivational messages pool
+  const motivationalMessages = [
+    "You're crushing it! Keep up the momentum!",
+    "Great job! You're almost there, stay focused!",
+    "Amazing progress! Let's finish strong!",
+    "You're unstoppable today! Keep shining!",
+    "Well done! Your hard work is paying off!"
+  ];
+
+  // Function to generate motivational alert based on task progress
+  const generateMotivationalAlert = (completedCount, totalCount) => {
+    if (totalCount === 0) {
+      toast.info("No tasks yet? Let's get started!", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        className: 'custom-toast', // Apply custom class
+        bodyClassName: 'custom-toast-body', // Style the message text
+      });
+      return;
+    }
+
+    const progressPercentage = Math.round((completedCount / totalCount) * 100);
+    let message;
+
+    if (progressPercentage >= 80) {
+      message = `${
+        motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)]
+      } You're ${progressPercentage}% done with your day!`;
+    } else if (progressPercentage >= 50) {
+      message = `Nice work! You're ${progressPercentage}% through your tasks. Keep it up!`;
+    } else {
+      message = `You're making progress! ${progressPercentage}% done. Let's do this!`;
+    }
+
+    toast.success(message, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      className: 'custom-toast', // Apply custom class
+      bodyClassName: 'custom-toast-body', // Style the message text
+    });
+  };
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -37,6 +89,10 @@ const EmployeeDashboard = () => {
 
         if (response.ok) {
           setTasks(data);
+          // Trigger motivational alert on login
+          const completedCount = data.filter(task => task.status === 'completed').length;
+          const totalCount = data.length;
+          generateMotivationalAlert(completedCount, totalCount);
         } else {
           setError(data.error || 'Failed to fetch tasks');
         }
@@ -134,7 +190,7 @@ const EmployeeDashboard = () => {
                     className="bg-[#83868a] p-3 my-2 rounded flex justify-between items-center"
                   >
                     <div>
-                      <span className="text-white block">{task.description || "No description"}</span>
+                      <span className="text-white block">{task.description || " thornNo description"}</span>
                       <span className="text-gray-300 text-lg"> {/* Changed from text-sm to text-lg */}
                         {task.date || "No date"} at {task.time || "No time"} -{" "}
                         {task.address && task.address.startsWith("http") ? (
@@ -178,7 +234,6 @@ const EmployeeDashboard = () => {
                   <p className="text-gray-300">No completed tasks</p>
                 </div>
               ) : (
-                
                 completedTasks.map((task) => (
                   <div
                     key={task._id || Math.random()}
@@ -186,7 +241,6 @@ const EmployeeDashboard = () => {
                   >
                     <div>
                       <span className="text-white block">{task.description || "No description"}</span>
-                      
                     </div>
                     <a
                       href="#"
@@ -205,6 +259,40 @@ const EmployeeDashboard = () => {
           </>
         )}
       </div>
+      {/* ToastContainer with custom styling */}
+      <ToastContainer
+        toastClassName="custom-toast"
+        bodyClassName="custom-toast-body"
+      />
+      {/* Inline CSS for toast styling */}
+      <style>
+        {`
+          .custom-toast {
+            background-color: #495057;
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-family: inherit;
+          }
+          .custom-toast-body {
+            font-size: 16px;
+            font-weight: 500;
+            color: #ffffff;
+          }
+          .Toastify__progress-bar {
+            background-color: #83868a;
+          }
+          .Toastify__close-button {
+            color: #ffffff;
+            opacity: 0.7;
+          }
+          .Toastify__close-button:hover {
+            opacity: 1;
+          }
+        `}
+      </style>
     </div>
   );
 };
