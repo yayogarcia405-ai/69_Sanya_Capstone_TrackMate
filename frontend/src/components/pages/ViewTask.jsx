@@ -150,7 +150,8 @@ const ViewTask = () => {
   const handleTaskCompleted = async () => {
     try {
       const token = localStorage.getItem("token");
-      const employeeId = localStorage.getItem("userId");
+      // const employeeId = localStorage.getItem("userId");
+      const employeeId= task.employeeId;
       console.log("Employee ID from localStorage:", employeeId);
       console.log("Task Employee ID:", task?.employeeId);
 
