@@ -47,7 +47,8 @@ function App() {
         <Route path="/manager/add-task/:employeeId" element={<AddTask/>}/>
         <Route path="/manager/view-schedule/:employeeId" element={<ViewSchedule/>}/>
         <Route path="/view-logs/:taskId" element={<ViewLogs/>}/>
-        <Route path="/manager-settings/:employeeId" element={<ManagerSettings/>}/>        
+        <Route path="/manager-settings/:employeeId" element={<ManagerSettings/>}/> 
+        <Route path="/help-support" element={<HelpSupport/>}/>       
         <Route path="/faq" element={<FAQ/>}/>
         <Route path="/employee-dashboard/:employeeId" element={ <EmployeeDashboard />}/>
         <Route path="/view-task/:taskId" element={<ViewTask/>}/>
