@@ -10,6 +10,7 @@ export default function EmployeeSettings() {
     { label: "Language Settings", route: "/language-settings", icon: <FaLanguage className="text-xl text-gray-700" /> },
     { label: "Logout", route: `/employee-logout/${employeeId}`, icon: <FaUserCog className="text-xl text-gray-700" /> },
     { label: "FAQs", route: "/faq", icon: <FaQuestionCircle className="text-xl text-gray-700" /> },
+    { label: "Help & Support", route: "/help-support", icon: <FaHandsHelping className="text-xl text-gray-700" /> },
   ];
 
   return (
