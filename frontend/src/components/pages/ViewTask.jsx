@@ -253,7 +253,7 @@ const ViewTask = () => {
         </div>
         <button
           className="absolute right-8 top-5 text-white"
-          onClick={() => navigate("/employee-settings")}
+          onClick={() => navigate(`/employee-settings/${employeeId}`)}
           aria-label="Employee Settings"
         >
           <Settings size={28} />

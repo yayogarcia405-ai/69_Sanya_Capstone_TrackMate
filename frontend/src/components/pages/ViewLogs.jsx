@@ -10,7 +10,7 @@ const ViewLogs = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [imageError, setImageError] = useState({ checkIn: false, checkOut: false });
-
+  
   useEffect(() => {
     const fetchTaskLogs = async () => {
       try {
@@ -89,12 +89,6 @@ const ViewLogs = () => {
           <img src={Logoimg} alt="TrackMate Logo" className="h-12 w-12 object-contain" />
           <h1 className="text-3xl font-bold text-white">TrackMate</h1>
         </div>
-        <button
-          className="absolute right-8 top-5 text-white"
-          onClick={() => navigate("/manager-settings")}
-        >
-          <Settings size={28} />
-        </button>
       </nav>
 
       {/* Logs Section */}

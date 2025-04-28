@@ -42,12 +42,7 @@ const AddTask = () => {
           <img src={Logoimg} alt="TrackMate Logo" className="h-12 w-12 object-contain" />
           <h1 className="text-3xl font-bold text-white">TrackMate</h1>
         </div>
-        <button
-          className="absolute right-8 top-5 text-white"
-          onClick={() => navigate("/manager-settings")} // ✅ Navigation
-        >
-          <Settings size={28} />
-        </button>
+        
       </nav>
 
       {/* Form Container */}
