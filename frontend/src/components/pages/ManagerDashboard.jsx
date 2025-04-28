@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Settings } from "lucide-react";
 import axios from "axios";
 import Logoimg from "../images/trackmate.png";
-import React from "react"; // Explicitly import React for React.memo
+import React from "react"; 
+import ManagersList from "./ManagersList";
 
 export default function ManagerDashboard() {
   const navigate = useNavigate();
@@ -75,11 +76,16 @@ export default function ManagerDashboard() {
 
       {/* Render Active Tab */}
       <div className="mt-8 px-10">
-        {activeTab === "task-assignment" ? (
-          <TaskAssignment employees={employees} />
-        ) : (
-          <DepartmentAssignment employees={employees} setEmployees={setEmployees} />
-        )}
+      {(() => {
+          if (activeTab === "task-assignment") {
+            return <TaskAssignment employees={employees} />;
+          } else if (activeTab === "department-assignment") {
+            return <DepartmentAssignment employees={employees} setEmployees={setEmployees} />;
+          } else if (activeTab === "connect") {
+            return <ManagersList />;
+          }
+          return null;
+        })()}
       </div>
     </div>
   );
