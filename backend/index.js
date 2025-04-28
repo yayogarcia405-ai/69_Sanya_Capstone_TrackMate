@@ -17,7 +17,7 @@ app.use(express.json({ limit: '20mb' }));
 //   });
 app.use(cors({
     // origin: 'http://localhost:5173',// Replace with your frontend URL (Vite default)
-    origin: 'https://trackmateapp.netlify.app/',
+    origin: 'https://trackmateapp.netlify.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   }));
