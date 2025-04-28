@@ -29,15 +29,17 @@ const upload = multer({ storage });
 
 
 
-router.get("/employees", async (req, res) => {
-    try {
-      const employees = await User.find({ roles: "employee" }).select("-password"); // hide password
-      res.status(200).json(employees);
-    } catch (err) {
-      console.error("Error fetching employees:", err);
-      res.status(500).json({ message: "Failed to fetch employees." });
-    }
-  });
+router.get('/employees', async (req, res) => {
+  try {
+    const employees = await User.find({ roles: 'employee' })
+      .select('-password')
+      .populate('department', 'name');
+    res.status(200).json(employees);
+  } catch (err) {
+    console.error('Error fetching employees:', err);
+    res.status(500).json({ message: 'Failed to fetch employees.' });
+  }
+});
   router.get("/managers", async (req, res) => {
   try {
     const managers = await User.find({ roles: "manager" }).select("-password");

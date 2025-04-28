@@ -8,7 +8,7 @@ const authRoutes = require('./routes/auth');
 const taskRoutes=require('./routes/taskRoutes');
 const { generateOTP, sendOTP, storeOTP, verifyOTP } = require("./utils/otpService");
 const path = require("path");
-const Task = require('./models/Task');
+const departmentRoutes=require('./routes/departmentRoutes');
 app.use(express.json({ limit: '20mb' }));
 // app.use((req, res, next) => {
 //     console.log(`Incoming request: ${req.method} ${req.url}`); // Debug
@@ -16,8 +16,8 @@ app.use(express.json({ limit: '20mb' }));
 //     next();
 //   });
 app.use(cors({
-    // origin: 'http://localhost:5173',
-    origin: 'https://trackmateapp.netlify.app',
+    origin: 'http://localhost:5173',
+    // origin: 'https://trackmateapp.netlify.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   }));
@@ -29,7 +29,8 @@ app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api", taskRoutes)
+app.use("/api", taskRoutes);
+app.use('/api/departments', departmentRoutes);
 
 // Send OTP via Email
 app.post("/otp-login", async (req, res) => {

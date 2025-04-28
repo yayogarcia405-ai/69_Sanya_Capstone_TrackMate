@@ -20,8 +20,9 @@ const UserSchema= new mongoose.Schema({
         enum: ["manager", "employee"]
     },
     department: {
-        type: String,
-        default: "", // Optional: gives you a blank value by default
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Department',
+        default: null,
       },
       document: {
         filename: { type: String, default: "" },

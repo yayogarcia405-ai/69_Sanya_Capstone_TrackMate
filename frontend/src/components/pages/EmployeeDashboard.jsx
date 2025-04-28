@@ -8,6 +8,8 @@ import 'react-toastify/dist/ReactToastify.css';
 const EmployeeDashboard = () => {
   const { employeeId } = useParams();
   const [tasks, setTasks] = useState([]);
+  const [employee, setEmployee] = useState(null); // Store full employee data
+  const [department, setDepartment]=useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -31,8 +33,8 @@ const EmployeeDashboard = () => {
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-        className: 'custom-toast', // Apply custom class
-        bodyClassName: 'custom-toast-body', // Style the message text
+        className: 'custom-toast',
+        bodyClassName: 'custom-toast-body',
       });
       return;
     }
@@ -57,13 +59,13 @@ const EmployeeDashboard = () => {
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
-      className: 'custom-toast', // Apply custom class
-      bodyClassName: 'custom-toast-body', // Style the message text
+      className: 'custom-toast',
+      bodyClassName: 'custom-toast-body',
     });
   };
 
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchData = async () => {
       if (!employeeId) {
         setError('Employee ID not found in URL');
         setLoading(false);
@@ -78,33 +80,53 @@ const EmployeeDashboard = () => {
           return;
         }
 
-        const response = await fetch(`${import.meta.env.VITE_META_URI}/api/tasks/${employeeId}`, {
+        // Fetch tasks
+        const taskResponse = await fetch(`${import.meta.env.VITE_META_URI}/api/tasks/${employeeId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        const data = await response.json();
-        console.log('Tasks response for employeeId', employeeId, ':', data); // Debug log
+        const taskData = await taskResponse.json();
+        console.log('Tasks response for employeeId', employeeId, ':', taskData);
 
-        if (response.ok) {
-          setTasks(data);
-          // Trigger motivational alert on login
-          const completedCount = data.filter(task => task.status === 'completed').length;
-          const totalCount = data.length;
+        if (taskResponse.ok) {
+          setTasks(taskData);
+          const completedCount = taskData.filter(task => task.status === 'completed').length;
+          const totalCount = taskData.length;
           generateMotivationalAlert(completedCount, totalCount);
         } else {
-          setError(data.error || 'Failed to fetch tasks');
+          setError(taskData.error || 'Failed to fetch tasks');
+        }
+
+        const employeeResponse = await fetch(`${import.meta.env.VITE_META_URI}/api/auth/employees`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const employeeData = await employeeResponse.json();
+        console.log('Employee response:', employeeData);
+
+        if (employeeResponse.ok) {
+          const employee = employeeData.find(emp => emp._id === employeeId);
+          if (employee) {
+            setEmployee(employee); // Store full employee object
+          } else {
+            setError('Employee not found');
+          }
+        } else {
+          setError(employeeData.message || 'Failed to fetch employee data');
         }
       } catch (err) {
         console.error('Fetch error:', err);
-        setError('An error occurred while fetching tasks');
+        setError('An error occurred while fetching data');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTasks();
+    fetchData();
   }, [employeeId]);
 
   if (loading) return <div>Loading tasks...</div>;
@@ -113,7 +135,7 @@ const EmployeeDashboard = () => {
   // Filter tasks by status based on schema
   const upcomingTasks = tasks.filter(task => task.status === 'upcoming');
   const completedTasks = tasks.filter(task => task.status === 'completed');
-  
+
   return (
     <div className="bg-[#c2c0c0] min-h-screen flex flex-col items-center">
       {/* Navbar */}
@@ -136,7 +158,8 @@ const EmployeeDashboard = () => {
         <h2 className="text-white text-3xl font-bold text-center mb-2">
           Employee Dashboard - {new Date().toLocaleDateString()}
         </h2>
-        <p className="text-white text-center mb-6 text-xl">Employee ID: {employeeId}</p>
+        <p className="text-white text-center mb-1 text-xl">Employee ID: {employeeId}</p>
+        <p className="text-white text-center mb-6 text-xl">Department: {employee?.department?.name || "No department assigned"}</p>
 
         {/* Error Message */}
         {error && (
@@ -145,32 +168,6 @@ const EmployeeDashboard = () => {
           </div>
         )}
 
-        {/* Refresh Button
-        <div className="flex justify-end mb-4">
-          <button
-            onClick={async () => {
-              setLoading(true);
-              try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`${import.meta.env.VITE_META_URI}/tasks/${employeeId}`, {
-                  headers: { Authorization: `Bearer ${token}` },
-                });
-                const data = await response.json();
-                if (response.ok) setTasks(data);
-                else setError(data.error || 'Failed to fetch tasks');
-              } catch (err) {
-                console.error('Refresh error:', err);
-                setError('An error occurred while refreshing tasks');
-              } finally {
-                setLoading(false);
-              }
-            }}
-            className="bg-[#495057] text-white px-4 py-2 rounded hover:bg-[#343A40]"
-          >
-            Refresh Tasks
-          </button>
-        </div> */}
-
         {/* Loading or Content */}
         {loading ? (
           <p className="text-white text-center">Loading tasks...</p>
@@ -178,10 +175,10 @@ const EmployeeDashboard = () => {
           <>
             {/* Upcoming Tasks */}
             <div className="bg-[#495057] p-6 rounded-lg">
-              <h3 className="text-white text-xl font-bold">Upcoming Tasks ({upcomingTasks.length})</h3>
+              <h3 className="text-white text-xl font-bold">Upcoming Claims ({upcomingTasks.length})</h3>
               {upcomingTasks.length === 0 ? (
                 <div className="bg-[#83868a] p-3 my-2 rounded flex justify-between items-center">
-                  <p className="text-gray-300">No upcoming tasks</p>
+                  <p className="text-gray-300">No upcoming claims</p>
                 </div>
               ) : (
                 upcomingTasks.map((task) => (
@@ -190,25 +187,25 @@ const EmployeeDashboard = () => {
                     className="bg-[#83868a] p-3 my-2 rounded flex justify-between items-center"
                   >
                     <div>
-                      <span className="text-white block">{task.description || " thornNo description"}</span>
-                      <span className="text-gray-300 text-lg"> {/* Changed from text-sm to text-lg */}
+                      <span className="text-white block">{task.description || "No description"}</span>
+                      <span className="text-gray-300 text-lg">
                         {task.date || "No date"} at {task.time || "No time"} -{" "}
                         {task.address && task.address.startsWith("http") ? (
-                            <a
-                              href={task.address}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                window.open(task.address, "_blank", "noopener,noreferrer");
-                              }}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-white-400 underline hover:text-blue-300"
-                            >
-                              📍 Open Location in Maps
-                            </a>
-                          ) : (
-                            <span className="text-gray-400">📍 No location link</span>
-                          )}
+                          <a
+                            href={task.address}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              window.open(task.address, "_blank", "noopener,noreferrer");
+                            }}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-white-400 underline hover:text-blue-300"
+                          >
+                            📍 Open Location in Maps
+                          </a>
+                        ) : (
+                          <span className="text-gray-400">📍 No location link</span>
+                        )}
                       </span>
                     </div>
                     <a
@@ -219,7 +216,7 @@ const EmployeeDashboard = () => {
                         navigate(`/view-task/${task._id}`);
                       }}
                     >
-                      View Task
+                      View Claim
                     </a>
                   </div>
                 ))
@@ -228,10 +225,10 @@ const EmployeeDashboard = () => {
 
             {/* Completed Tasks */}
             <div className="bg-[#495057] p-6 rounded-lg mt-6">
-              <h3 className="text-white text-xl font-bold">Completed Tasks ({completedTasks.length})</h3>
+              <h3 className="text-white text-xl font-bold">Completed Claims ({completedTasks.length})</h3>
               {completedTasks.length === 0 ? (
                 <div className="bg-[#83868a] p-3 my-2 rounded flex justify-between items-center">
-                  <p className="text-gray-300">No completed tasks</p>
+                  <p className="text-gray-300">No completed claims</p>
                 </div>
               ) : (
                 completedTasks.map((task) => (
@@ -259,12 +256,10 @@ const EmployeeDashboard = () => {
           </>
         )}
       </div>
-      {/* ToastContainer with custom styling */}
       <ToastContainer
         toastClassName="custom-toast"
         bodyClassName="custom-toast-body"
       />
-      {/* Inline CSS for toast styling */}
       <style>
         {`
           .custom-toast {
