@@ -68,6 +68,17 @@ export default function ManagerDashboard() {
         >
           Department Assignment
         </button>
+        <span className="text-gray-400">|</span>
+        <button
+          className={`cursor-pointer px-4 py-2 ${
+            activeTab === "connect" ? "text-black" : "text-gray-500"
+          }`}
+          onClick={() => setActiveTab("connect")}
+          aria-selected={activeTab === "connect"}
+          role="tab"
+        >
+          Connect
+        </button>
       </div>
 
       {/* Error Message */}
