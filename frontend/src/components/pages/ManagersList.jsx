@@ -59,7 +59,7 @@ const ManagersList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#495057] p-6">
+    <div className="min-h-screen bg-[#495057] p-6 rounded-30 rounded-md">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-white mb-6">Managers List</h1>
         {managers.length === 0 ? (
