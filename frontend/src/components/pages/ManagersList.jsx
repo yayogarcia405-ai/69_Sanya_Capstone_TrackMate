@@ -17,7 +17,7 @@ const ManagersList = () => {
           return;
         }
 
-        const response = await axios.get('http://localhost:5000/api/auth/managers', {
+        const response = await axios.get(`${import.meta.env.VITE_META_URI}/api/auth/managers`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
