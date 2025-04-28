@@ -35,7 +35,7 @@ export default function ManagerDashboard() {
       <nav className="w-full flex flex-col items-center px-8 py-5 bg-[#343A40] shadow-md h-20 relative">
         <div className="flex items-center space-x-4">
           <img src={Logoimg} alt="TrackMate Logo" className="h-12 w-12 object-contain" />
-          <h1 className="text-3xl font-bold text-white">TrackMate</h1>
+          /<h1 className="text-3xl font-bold text-white">TrackMate</h1>
         </div>
         <button
           className="absolute right-8 top-5 text-white"

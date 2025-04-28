@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Bgimg from "../images/background2.jpeg";
 
 const OtpVerifyE = () => {
   const [email, setEmail] = useState("");
@@ -54,8 +55,13 @@ const OtpVerifyE = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-[#c2c0c0]">
-      <form className="bg-[#626669] p-6 rounded-lg shadow-md w-96 text-white" onSubmit={handleVerifyOtp}>
+    <div className="flex justify-center items-center h-screen bg-[#c2c0c0]"
+    style={{
+          backgroundImage: `url(${Bgimg})`, // Set image as background
+          backgroundSize: 'cover', // Make sure the image covers the area
+          backgroundPosition: 'center', // Position the image center
+        }}>
+      <form className="bg-black/40 backdrop-blur-md border border-white/30 hover:bg-white/10  text-white p-8 rounded-2xl shadow-xl w-100 text-center cursor-pointer  hover:-translate-y-2" onSubmit={handleVerifyOtp}>
         <h2 className="text-xl font-bold mb-4 text-center text-white">Verify OTP</h2>
         {message && (
           <p className={`text-sm text-center mb-3 ${message.includes("Success") ? "text-green-400" : "text-red-400"}`}>

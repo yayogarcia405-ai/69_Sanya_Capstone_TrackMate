@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Bgimg from "../images/background2.jpeg";
 
 const VerifyResetOtp = () => {
   const [otp, setOtp] = useState("");
@@ -20,8 +21,13 @@ const VerifyResetOtp = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-[#c2c0c0]">
-      <form className="bg-[#626669] p-8 rounded-lg shadow-md w-96  flex flex-col justify-center text-white" onSubmit={handleVerifyOtp}>
+    <div className="flex justify-center items-center h-screen bg-[#c2c0c0]"
+    style={{
+          backgroundImage: `url(${Bgimg})`, // Set image as background
+          backgroundSize: 'cover', // Make sure the image covers the area
+          backgroundPosition: 'center', // Position the image center
+        }}>
+      <form className="bg-black/40 backdrop-blur-md border border-white/30 hover:bg-white/10  text-white p-8 rounded-2xl shadow-xl w-100 text-center cursor-pointer  hover:-translate-y-2" onSubmit={handleVerifyOtp}>
         
         {/* Title */}
         <h2 className="text-2xl font-bold mb-6 text-center text-white">Verify OTP</h2>

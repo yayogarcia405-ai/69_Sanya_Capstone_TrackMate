@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ManagersList = () => {
   const [managers, setManagers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState({});
 
   useEffect(() => {
     const fetchManagers = async () => {
@@ -33,6 +34,25 @@ const ManagersList = () => {
 
     fetchManagers();
   }, []);
+  const copyToClipboard = (email) => {
+    if (!emailRegex.test(email)) {
+      toast.error('Invalid email address.');
+      return;
+    }
+
+    navigator.clipboard.writeText(email)
+      .then(() => {
+        console.log(`Copied ${email} to clipboard`);
+        toast.success('Email copied to clipboard!');
+        setCopied((prev) => ({ ...prev, [email]: true }));
+        // Reset copied state after 2 seconds
+        setTimeout(() => setCopied((prev) => ({ ...prev, [email]: false })), 2000);
+      })
+      .catch((err) => {
+        console.error('Failed to copy to clipboard:', err);
+        toast.error('Failed to copy email. Please try again or check permissions.');
+      });
+  };
 
   if (loading) {
     return <div className="text-white text-center mt-10">Loading managers...</div>;
@@ -60,12 +80,14 @@ const ManagersList = () => {
                     <td className="p-3 text-white">{manager.username || 'N/A'}</td>
                     <td className="p-3 text-white">{manager.email}</td>
                     <td className="p-3">
-                      <a
-                        href={`mailto:${manager.email}`}
-                        className="text-blue-400 hover:text-blue-300"
-                      >
-                        Contact
-                      </a>
+                    <button
+                              onClick={() => copyToClipboard(manager.email)}
+                              className={`${
+                                copied[manager.email] ? 'text-green-500' : 'text-white'
+                              } hover:underline focus:outline-none`}
+                            >
+                              {copied[manager.email] ? 'Copied!' : 'Copy Email'}
+                            </button>
                     </td>
                   </tr>
                 ))}

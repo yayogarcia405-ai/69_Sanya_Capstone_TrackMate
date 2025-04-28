@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Bgimg from "../images/background2.jpeg";
 
 export default function ManagerLogin() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -37,9 +38,14 @@ export default function ManagerLogin() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-[#c2c0c0]">
+    <div className="flex justify-center items-center h-screen bg-[#c2c0c0]" 
+    style={{
+      backgroundImage: `url(${Bgimg})`, // Set image as background
+      backgroundSize: 'cover', // Make sure the image covers the area
+      backgroundPosition: 'center', // Position the image center
+    }}>
       <form
-        className="bg-[#626669] p-8 rounded-lg shadow-md w-96 h-[26rem] flex flex-col justify-center text-white"
+        className="bg-black/40 backdrop-blur-md border border-white/30 hover:bg-white/10  text-white p-8 rounded-2xl shadow-xl w-100 text-center cursor-pointer  hover:-translate-y-2"
         onSubmit={handleSubmit}
       >
         {/* Title */}
