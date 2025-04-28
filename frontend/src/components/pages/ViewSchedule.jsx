@@ -108,7 +108,7 @@ const ViewSchedule = () => {
     if (!taskToRemove) return;
 
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_META_URI}/tasks/${taskToRemove}`);
+      const response = await axios.delete(`${import.meta.env.VITE_META_URI}/api/tasks/${taskToRemove}`);
       console.log("Delete response:", response); // Debug the response
       if (response.status === 200) {
         setTasks(tasks.filter((task) => task._id !== taskToRemove));
