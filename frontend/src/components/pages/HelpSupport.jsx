@@ -31,7 +31,7 @@ const HelpSupport = () => {
 
             <div>
               <h3 className="font-semibold text-[#495057]">📞 Call Us</h3>
-              <p className="text-gray-700">+91 98765 43210 (Mon - Fri, 9AM - 6PM)</p>
+              <p className="text-gray-700">‪+91 98765 43210‬ (Mon - Fri, 9AM - 6PM)</p>
             </div>
 
 
@@ -44,7 +44,7 @@ const HelpSupport = () => {
           </div>
 
           <p className="mt-6 text-center text-sm text-gray-500">
-            Thank you for using TrackMate! ❤️
+            Thank you for using TrackMate! ❤
           </p>
         </div>
       </div>
@@ -52,4 +52,4 @@ const HelpSupport = () => {
   );
 };
 
-export default HelpSupport;
+export default HelpSupport;
