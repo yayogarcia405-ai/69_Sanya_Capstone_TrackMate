@@ -4,7 +4,7 @@ import { FaSignOutAlt } from "react-icons/fa";
 
 const ELogoutPage = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // employee id from URL
+  const id=localStorage.getItem("userId");
 
   const handleConfirmLogout = () => {
     // Clear token/localStorage or anything you use for auth
@@ -16,7 +16,7 @@ const ELogoutPage = () => {
 
   const handleCancelLogout = () => {
     // Go back to previous page or dashboard
-    navigate(`/employee-dashboard/${id}`);
+    navigate(-1);
   };
 
   return (

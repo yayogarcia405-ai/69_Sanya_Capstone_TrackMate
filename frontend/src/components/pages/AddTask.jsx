@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Logoimg from "../images/trackmate.png";
 import { useParams, useNavigate } from "react-router-dom";
 import { Settings } from "lucide-react";
+import { FiArrowLeft } from "react-icons/fi";
 import axios from "axios";
 const AddTask = () => {
   const { employeeId } = useParams();
@@ -33,17 +34,24 @@ const AddTask = () => {
     alert("Failed to add task");
   }
   };
+  const userId=localStorage.getItem("userId");
 
   return (
     <div className="bg-[#c2c0c0] min-h-screen flex flex-col items-center">
-      {/* Navbar */}
-      <nav className="w-full flex flex-col items-center px-8 py-5 bg-[#343A40] shadow-md h-20 relative">
-        <div className="flex items-center space-x-4">
-          <img src={Logoimg} alt="TrackMate Logo" className="h-12 w-12 object-contain" />
-          <h1 className="text-3xl font-bold text-white">TrackMate</h1>
-        </div>
-        
-      </nav>
+      <nav className="w-full h-20 bg-[#343A40] shadow-md relative flex items-center justify-center">
+  {/* Back Arrow - absolutely positioned on the left */}
+  <FiArrowLeft
+    className="text-white cursor-pointer absolute left-6"
+    size={25}
+    onClick={() => navigate(`/manager-dashboard/${userId}`)}
+  />
+
+  {/* Centered Logo and Title */}
+  <div className="flex items-center space-x-4">
+    <img src={Logoimg} alt="TrackMate Logo" className="h-12 w-12 object-contain" />
+    <h1 className="text-3xl font-bold text-white">TrackMate</h1>
+  </div>
+</nav>
 
       {/* Form Container */}
       <div className="bg-[#6C757D] p-8 mt-10 rounded-xl w-11/12 max-w-6xl shadow-lg">

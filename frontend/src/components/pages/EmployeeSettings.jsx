@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Logoimg from "../images/trackmate.png";
 import { FaUserCog, FaLanguage, FaQuestionCircle, FaHandsHelping } from "react-icons/fa";
+import { FiArrowLeft } from "react-icons/fi";
 
 export default function EmployeeSettings() {
   const navigate = useNavigate();
@@ -11,12 +12,17 @@ export default function EmployeeSettings() {
     { label: "FAQs", route: "/faq", icon: <FaQuestionCircle className="text-xl text-gray-700" /> },
     { label: "Help & Support", route: "/help-support", icon: <FaHandsHelping className="text-xl text-gray-700" /> },
     { label: "Logout", route: `/employee-logout/${employeeId}`, icon: <FaUserCog className="text-xl text-gray-700" /> },
-  ];
+  ]; 
 
   return (
     <div className="w-full min-h-screen bg-[#c2c0c0]">
       {/* Navbar */}
       <nav className="w-full flex flex-col items-center px-8 py-5 bg-[#343A40] shadow-md h-20 relative">
+        <FiArrowLeft
+            className="text-white cursor-pointer absolute left-6"
+            size={25}
+            onClick={() => navigate(`/employee-dashboard/${employeeId}`)}
+          />
         <div className="flex items-center space-x-4">
           <img src={Logoimg} alt="TrackMate Logo" className="h-12 w-12 object-contain" />
           <h1 className="text-3xl font-bold text-white">TrackMate</h1>

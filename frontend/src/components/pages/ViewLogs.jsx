@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Logoimg from "../images/trackmate.png";
 import { Settings } from "lucide-react";
+import { FiArrowLeft } from "react-icons/fi";
 
 const ViewLogs = () => {
   const navigate = useNavigate();
@@ -33,10 +34,12 @@ const ViewLogs = () => {
         }
 
         const data = await response.json();
+
         console.log("taskId:", taskId);
         console.log("Fetched task data (full):", data);
         console.log("Check-In Photo (raw):", data.log?.checkInPhoto);
         console.log("Check-Out Photo (raw):", data.log?.checkOutPhoto);
+        console.log(data.employeeId);
         setTask(data);
         setLoading(false);
       } catch (err) {
@@ -83,13 +86,20 @@ const ViewLogs = () => {
 
   return (
     <div className="bg-[#c2c0c0] min-h-screen flex flex-col items-center">
-      {/* Navbar */}
-      <nav className="w-full flex flex-col items-center px-8 py-5 bg-[#343A40] shadow-md h-20 relative">
-        <div className="flex items-center space-x-4">
-          <img src={Logoimg} alt="TrackMate Logo" className="h-12 w-12 object-contain" />
-          <h1 className="text-3xl font-bold text-white">TrackMate</h1>
-        </div>
-      </nav>
+              <nav className="w-full h-20 bg-[#343A40] shadow-md relative flex items-center justify-center">
+          {/* Back Arrow - absolutely positioned on the left */}
+          <FiArrowLeft
+            className="text-white cursor-pointer absolute left-6"
+            size={25}
+            onClick={() => navigate(-1)}
+          />
+        
+          {/* Centered Logo and Title */}
+          <div className="flex items-center space-x-4">
+            <img src={Logoimg} alt="TrackMate Logo" className="h-12 w-12 object-contain" />
+            <h1 className="text-3xl font-bold text-white">TrackMate</h1>
+          </div>
+        </nav>
 
       {/* Logs Section */}
       <div className="bg-[#343A40] p-8 mt-10 rounded-xl w-11/12 max-w-4xl shadow-lg">

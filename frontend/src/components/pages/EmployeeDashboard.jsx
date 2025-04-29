@@ -175,10 +175,10 @@ const EmployeeDashboard = () => {
           <>
             {/* Upcoming Tasks */}
             <div className="bg-[#495057] p-6 rounded-lg">
-              <h3 className="text-white text-xl font-bold">Upcoming Claims ({upcomingTasks.length})</h3>
+              <h3 className="text-white text-xl font-bold">Upcoming Tasks ({upcomingTasks.length})</h3>
               {upcomingTasks.length === 0 ? (
                 <div className="bg-[#83868a] p-3 my-2 rounded flex justify-between items-center">
-                  <p className="text-gray-300">No upcoming claims</p>
+                  <p className="text-gray-300">No upcoming tasks</p>
                 </div>
               ) : (
                 upcomingTasks.map((task) => (
@@ -216,7 +216,7 @@ const EmployeeDashboard = () => {
                         navigate(`/view-task/${task._id}`);
                       }}
                     >
-                      View Claim
+                      View Task
                     </a>
                   </div>
                 ))
@@ -225,10 +225,10 @@ const EmployeeDashboard = () => {
 
             {/* Completed Tasks */}
             <div className="bg-[#495057] p-6 rounded-lg mt-6">
-              <h3 className="text-white text-xl font-bold">Completed Claims ({completedTasks.length})</h3>
+              <h3 className="text-white text-xl font-bold">Completed Tasks ({completedTasks.length})</h3>
               {completedTasks.length === 0 ? (
                 <div className="bg-[#83868a] p-3 my-2 rounded flex justify-between items-center">
-                  <p className="text-gray-300">No completed claims</p>
+                  <p className="text-gray-300">No completed tasks</p>
                 </div>
               ) : (
                 completedTasks.map((task) => (

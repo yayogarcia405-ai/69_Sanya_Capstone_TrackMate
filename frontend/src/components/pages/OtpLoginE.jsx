@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Bgimg from "../images/background2.jpeg";
+import Logoimg from "../images/trackmate.png";
+import { FiArrowLeft } from "react-icons/fi";
 
 const OtpLoginE = () => {
   const [email, setEmail] = useState("");
@@ -29,12 +31,33 @@ const OtpLoginE = () => {
   
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#c2c0c0]"
-    style={{
-          backgroundImage: `url(${Bgimg})`, // Set image as background
-          backgroundSize: 'cover', // Make sure the image covers the area
-          backgroundPosition: 'center', // Position the image center
-        }}>
+     <div
+            className="w-full min-h-screen bg-[#c2c0c0] flex flex-col relative"
+            style={{
+            backgroundImage: `url(${Bgimg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundAttachment: "fixed",
+            backgroundRepeat: "no-repeat",
+            opacity: 80, // Increased for better visibility
+                            // filter: "blur(2px)", // Subtle blur to make content pop
+            }}
+            >
+            {/* Gradient Overlay */}
+           <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-transparent z-0"></div>
+          {/* Navbar */}
+                                          <nav className="w-full flex  items-center px-8 py-5 bg-[#343A40]/50 backdrop-blur-md shadow-md h-20 relative z-10">
+                                          <FiArrowLeft
+                                                            className="ml-4 text-white cursor-pointer z-50"
+                                                            size={25}
+                                                            onClick={() => navigate("/employee-login")}
+                                                          />
+                                            <div className="flex items-center flex-1 justify-center absolute left-0 right-0">
+                                              <img src={Logoimg} alt="TrackMate Logo" className="h-12 w-12 object-contain" />
+                                              <h1 className="text-3xl font-bold text-white drop-shadow-md">TrackMate</h1>
+                                            </div>
+                                          </nav>
+                                          <div className="flex items-center justify-center min-h-screen">
       <div className="bg-black/40 backdrop-blur-md border border-white/30 hover:bg-white/10  text-white p-8 rounded-2xl shadow-xl w-100 text-center cursor-pointer  hover:-translate-y-2">
         <h2 className="text-xl font-bold mb-4 text-center text-white">Login with OTP</h2>
   
@@ -77,6 +100,7 @@ const OtpLoginE = () => {
           </>
         )} */}
       </div>
+    </div>
     </div>
   );
 };  

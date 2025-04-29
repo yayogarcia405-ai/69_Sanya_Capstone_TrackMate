@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Bgimg from "../images/background2.jpeg";
+import Logoimg from "../images/trackmate.png";
 
 export default function EmployeeSignup() {
   const [formData, setFormData] = useState({
@@ -64,13 +65,33 @@ export default function EmployeeSignup() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-[#c2c0c0]"
-    style={{
-          backgroundImage: `url(${Bgimg})`, // Set image as background
-          backgroundSize: 'cover', // Make sure the image covers the area
-          backgroundPosition: 'center', // Position the image center
-        }}>
-      <form className="bg-black/40 backdrop-blur-md border border-white/30 hover:bg-white/10  text-white p-8 rounded-2xl shadow-xl w-100 text-center cursor-pointer  hover:-translate-y-2" onSubmit={handleSubmit}>
+    <div
+              className="w-full min-h-screen bg-[#c2c0c0] flex flex-col relative"
+              style={{
+                backgroundImage: `url(${Bgimg})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundAttachment: "fixed",
+                backgroundRepeat: "no-repeat",
+                opacity: 80, // Increased for better visibility
+                // filter: "blur(2px)", // Subtle blur to make content pop
+              }}
+            >
+       {/* Gradient Overlay */}
+       <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-transparent z-0"></div>
+          
+                 {/* Navbar */}
+                          <nav className="w-full flex  items-center px-8 py-5 bg-[#343A40]/50 backdrop-blur-md shadow-md h-20 relative z-10">
+                            <div className="flex items-center flex-1 justify-center absolute left-0 right-0">
+                              <img src={Logoimg} alt="TrackMate Logo" className="h-12 w-12 object-contain" />
+                              <h1 className="text-3xl font-bold text-white drop-shadow-md">TrackMate</h1>
+                            </div>
+                          </nav>
+                          <div className="flex items-center justify-center min-h-screen">
+                          <form
+                    className="bg-black/40 backdrop-blur-md border border-white/30 hover:bg-white/10 text-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center cursor-pointer hover:-translate-y-2 transition-transform duration-300"
+                    onSubmit={handleSubmit}
+                  >
         
         <h2 className="text-2xl font-bold mb-6 text-center">Employee Signup</h2>
   
@@ -117,7 +138,7 @@ export default function EmployeeSignup() {
         />
 
         {/* Updated file input label */}
-        <label className="w-full bg-[#6C757D] text-white py-2 rounded-lg hover:bg-[#818181] text-center cursor-pointer mb-2">
+        <label className="w-30 text-white py-2 rounded-lg hover:underline text-center cursor-pointer mb-30">
           <span>{documentFile ? "Change Document" : "Upload Document"}</span>
           <input
             type="file"
@@ -133,10 +154,11 @@ export default function EmployeeSignup() {
           </p>
         )}
 
-        <button type="submit" className="w-full bg-[#343A40] text-white py-2 rounded-lg hover:bg-[#818181]">
+        <button type="submit" className="w-full bg-[#343A40] text-white py-2 rounded-lg hover:bg-[#818181] mt-5">
           Sign Up
         </button>
       </form>
+    </div>
     </div>
   );
 }

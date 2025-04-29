@@ -16,7 +16,7 @@ const LogoutPage = () => {
 
   const handleCancelLogout = () => {
     // Go back to previous page or dashboard
-    navigate(`/manager-dashboard/${id}`);
+    navigate(-1);
   };
 
   return (

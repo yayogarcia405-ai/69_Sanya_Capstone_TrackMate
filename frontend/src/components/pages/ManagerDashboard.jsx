@@ -152,6 +152,8 @@ const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ department }),
       });
+      console.log("Employees received:", employees);
+
 
       if (!res.ok) throw new Error("Failed to update department");
       const updatedEmp = await res.json();
@@ -182,6 +184,7 @@ const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {console.log(filteredEmployees)}
         {filteredEmployees.map((emp) => (
           <div
             key={`dept-${emp._id}`}
@@ -205,12 +208,13 @@ const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
                 </div>
               )
             )}
-
-        
+           
+        {console.log("Empoloyee Details : ",emp.department._id)}
             <div className="text-center">
               <p className="font-semibold text-lg">{emp.username}</p>
               <select
-                value={typeof emp.department === 'object' ? emp.department._id : emp.department || ""}
+                // value={typeof emp.department === 'object' ? emp.department : emp.department || emp._id||""}
+                value={emp.department == undefined || emp.department == null ?emp.department : emp.department._id}
                 onChange={(e) => handleDepartmentChange(emp._id, e.target.value)}
                 className="mt-2 border px-2 py-1 rounded"
               >
