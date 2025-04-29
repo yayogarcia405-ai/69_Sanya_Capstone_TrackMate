@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Bgimg from "../images/background2.jpeg";
 import Logoimg from "../images/trackmate.png";
+import { FiArrowLeft } from "react-icons/fi";
 
 export default function EmployeeSignup() {
   const [formData, setFormData] = useState({
@@ -82,6 +83,11 @@ export default function EmployeeSignup() {
           
                  {/* Navbar */}
                           <nav className="w-full flex  items-center px-8 py-5 bg-[#343A40]/50 backdrop-blur-md shadow-md h-20 relative z-10">
+                          <FiArrowLeft
+                                                          className="text-white cursor-pointer absolute left-6 z-50"
+                                                          size={25}
+                                                          onClick={() => navigate("/")}
+                                                        />
                             <div className="flex items-center flex-1 justify-center absolute left-0 right-0">
                               <img src={Logoimg} alt="TrackMate Logo" className="h-12 w-12 object-contain" />
                               <h1 className="text-3xl font-bold text-white drop-shadow-md">TrackMate</h1>
