@@ -93,7 +93,7 @@ const ResetPassword = () => {
           Reset Password
         </button>
 
-        {message && <p className="text-center text-sm mt-4 text-green-300">{message}</p>}
+        {message && <p className="text-center text-sm mt-4 text-white-300">{message}</p>}
       </form>
     </div>
     </div>

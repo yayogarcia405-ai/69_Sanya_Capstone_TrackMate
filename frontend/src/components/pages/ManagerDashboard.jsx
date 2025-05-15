@@ -130,8 +130,8 @@ const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
         setDepartments(response.data);
         setError(null);
       } catch (err) {
-        console.error('Error fetching departments:', err);
-        setError('Failed to load departments. Please try again.');
+        console.error("Error fetching departments:", err);
+        setError("Failed to load departments. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -139,6 +139,7 @@ const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
 
     fetchDepartments();
   }, []);
+
   const filteredEmployees = useMemo(() => {
     return employees.filter((emp) =>
       emp.username.toLowerCase().includes(search.toLowerCase())
@@ -152,8 +153,6 @@ const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ department }),
       });
-      console.log("Employees received:", employees);
-
 
       if (!res.ok) throw new Error("Failed to update department");
       const updatedEmp = await res.json();
@@ -162,16 +161,28 @@ const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
         throw new Error("Invalid employee data from API");
       }
 
+      // Normalize the department field to be an object (or null)
+      const updatedDepartment = department
+        ? departments.find((dept) => dept._id === department) || null
+        : null;
+
+      const normalizedEmp = {
+        ...updatedEmp,
+        department: updatedDepartment,
+      };
+
       setEmployees((prev) =>
-        prev.map((emp) => (emp._id === _id ? updatedEmp : emp))
+        prev.map((emp) => (emp._id === _id ? normalizedEmp : emp))
       );
     } catch (err) {
       console.error("Error:", err);
       alert("Failed to update department.");
     }
   };
+
   if (loading) return <div className="text-black text-center">Loading departments...</div>;
   if (error) return <div className="text-red-500 text-center">{error}</div>;
+
   return (
     <div>
       <h2 className="text-2xl font-bold text-black mb-4">Department Assignment</h2>
@@ -184,7 +195,6 @@ const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {console.log(filteredEmployees)}
         {filteredEmployees.map((emp) => (
           <div
             key={`dept-${emp._id}`}
@@ -199,7 +209,7 @@ const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
                   onError={(e) => {
                     console.log("Document image failed, using default:", emp.document.path);
                     e.target.onerror = null;
-                    e.target.src = "/default-document.png"; // Ensure this file exists in public/
+                    e.target.src = "/default-document.png";
                   }}
                 />
               ) : (
@@ -208,14 +218,14 @@ const DepartmentAssignment = React.memo(({ employees, setEmployees }) => {
                 </div>
               )
             )}
-           
-        {console.log("Empoloyee Details : ",emp.department._id)}
+
+            {console.log("Employee Details: ", emp.department ? emp.department._id : "No department")}
+
             <div className="text-center">
               <p className="font-semibold text-lg">{emp.username}</p>
               <select
-                // value={typeof emp.department === 'object' ? emp.department : emp.department || emp._id||""}
-                value={emp.department == undefined || emp.department == null ?emp.department : emp.department._id}
-                onChange={(e) => handleDepartmentChange(emp._id, e.target.value)}
+                value={emp.department?._id || ""}
+                onChange={(e) => handleDepartmentChange(emp._id, e.target.value || null)}
                 className="mt-2 border px-2 py-1 rounded"
               >
                 <option value="">No Department</option>

@@ -256,13 +256,6 @@ const ViewTask = () => {
           <img src={Logoimg} alt="TrackMate Logo" className="h-12 w-12 object-contain" />
           <h1 className="text-3xl font-bold text-white">TrackMate</h1>
         </div>
-        <button
-          className="absolute right-8 top-5 text-white"
-          onClick={() => navigate(`/employee-settings/${employeeId}`)}
-          aria-label="Employee Settings"
-        >
-          <Settings size={28} />
-        </button>
       </nav>
       <div className="bg-[#83868a] mt-10 p-8 rounded-xl w-11/12 max-w-4xl shadow-lg text-white">
         <h2 className="text-center text-3xl font-bold mb-2">Task Details</h2>
