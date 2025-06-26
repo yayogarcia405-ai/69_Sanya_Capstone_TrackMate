@@ -33,13 +33,13 @@ export default function EntryPage() {
         </div>
         <div className="flex gap-4 ml-auto">
           <button
-            className="px-6 py-2 bg-white/30 hover:bg-[#5c636a] transition-all duration-300  text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-1"
+            className="px-6 py-2 bg-white/30 hover:bg-[#5c636a] transition-all duration-300 rounded-lg text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-1"
             onClick={() => setShowLoginModal(true)}
           >
             LOGIN
           </button>
           <button
-            className="px-6 py-2 bg-white/30 hover:bg-[#5c636a] transition-all duration-300  text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-1"
+            className="px-6 py-2 bg-white/30 hover:bg-[#5c636a] transition-all duration-300 rounded-lg text-white font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-1"
             onClick={() => setShowSignupModal(true)}
           >
             SIGNUP
@@ -81,7 +81,7 @@ export default function EntryPage() {
         ].map((feature, idx) => (
           <div
             key={idx}
-            className="bg-white/22 backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all duration-300 text-white p-8 rounded-2xl shadow-xl w-80 text-center cursor-pointer transform hover:-translate-y-2"
+            className="bg-white/22 backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all duration-300 text-white p-8 rounded-2xl shadow-xl w-80 text-center transform hover:-translate-y-2"
           >
             <div className="text-4xl mb-4">{feature.icon}</div>
             <h3 className="font-bold text-2xl mb-4 text-white drop-shadow-md">{feature.title}</h3>
